@@ -116,3 +116,60 @@
     animation: shimmer 2s infinite linear;
   }
 }
+
+/* ── Tables ────────────────────────────── */
+.prose table {
+  @apply w-full overflow-hidden rounded-lg border border-border;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.prose thead {
+  @apply bg-secondary;
+}
+
+.prose th {
+  @apply border-b border-border px-4 py-2.5 text-left font-mono text-xs font-semibold uppercase tracking-wider text-foreground;
+}
+
+.prose td {
+  @apply border-b border-border/50 px-4 py-2.5 text-sm;
+}
+
+.prose tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.prose tbody tr:nth-child(even) {
+  @apply bg-secondary/30;
+}
+
+.prose tbody tr {
+  @apply transition-colors hover:bg-secondary/50;
+}
+
+/* ── Code blocks (rehype-pretty-code) ── */
+.prose figure[data-rehype-pretty-code-figure] {
+  @apply my-4;
+}
+
+.prose pre {
+  @apply rounded-xl border border-border/50;
+}
+
+.prose pre > code {
+  @apply grid text-sm leading-relaxed;
+}
+
+.prose pre > code > [data-line] {
+  @apply px-4;
+}
+
+.prose code:not(pre code) {
+  @apply rounded-md bg-secondary px-1.5 py-0.5 text-sm font-medium;
+}
+
+.prose code:not(pre code)::before,
+.prose code:not(pre code)::after {
+  content: none;
+}

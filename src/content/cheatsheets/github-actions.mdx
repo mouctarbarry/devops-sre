@@ -2,7 +2,7 @@
 title: GitHub Actions
 category: cicd
 description: Cheatsheet GitHub Actions — workflows, jobs, steps, secrets et patterns courants
-tags: [github-actions, cicd, workflows, automatisation, deploiement]
+tags: [github-actions, cicd, workflows, automatisation, déploiement]
 ---
 
 ## Structure d'un workflow
@@ -239,8 +239,8 @@ jobs:
 if: github.event_name == 'push'
 if: contains(github.event.head_commit.message, '[skip ci]') == false
 if: github.ref == 'refs/heads/main'
-if: always()    # Execute meme si un step precedent a echoue
-if: failure()   # Execute uniquement si un step precedent a echoue
+if: always()    # Exécuté même si un step précédent a échoue
+if: failure()   # Exécuté uniquement si un step précédent a échoue
 
 # Fonctions
 ${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -256,8 +256,8 @@ ${{ runner.os }}
 - **Pinning des actions** : utiliser `@v4` ou un SHA complet, pas `@main`
 - **Minimal permissions** : `permissions: contents: read` par defaut
 - **Secrets** : jamais en dur, toujours via `${{ secrets.* }}`
-- **Concurrency** : eviter les deploiements paralleles
-- **Timeouts** : definir `timeout-minutes` pour eviter les jobs bloques
+- **Concurrency** : éviter les déploiements paralleles
+- **Timeouts** : définir `timeout-minutes` pour éviter les jobs bloqués
 
 ```yaml
 concurrency:

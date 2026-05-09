@@ -14,7 +14,7 @@ tags: [ansible, automatisation, configuration, playbooks, roles]
 | **Role** | Collection reutilisable de taches, handlers, variables |
 | **Module** | Unite d'action (apt, copy, service, template...) |
 | **Task** | Appel d'un module avec des parametres |
-| **Handler** | Tache declenchee par un `notify` (ex: redemarrer nginx) |
+| **Handler** | Tache déclenchée par un `notify` (ex: redemarrer nginx) |
 | **Facts** | Informations collectees sur les machines cibles |
 
 ---
@@ -45,7 +45,7 @@ ansible_ssh_private_key_file=~/.ssh/deploy_key
 
 <TerminalBlock command="ansible all -i inventory.ini -m ping" output="Tester la connectivite de tous les hosts" />
 
-<TerminalBlock command="ansible web -m shell -a 'uptime'" output="Executer une commande sur le groupe web" />
+<TerminalBlock command="ansible web -m shell -a 'uptime'" output="Exécuter une commande sur le groupe web" />
 
 <TerminalBlock command="ansible db -m apt -a 'name=postgresql state=present' --become" output="Installer PostgreSQL sur les serveurs DB" />
 
@@ -111,11 +111,11 @@ ansible_ssh_private_key_file=~/.ssh/deploy_key
 
 <TerminalBlock command="ansible-playbook deploy.yml --check" output="Dry run — affiche ce qui serait change sans l'appliquer" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --diff" output="Affiche les differences dans les fichiers modifies" />
+<TerminalBlock command="ansible-playbook deploy.yml --diff" output="Affiche les différences dans les fichiers modifies" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --limit web-01" output="Executer uniquement sur un host specifique" />
+<TerminalBlock command="ansible-playbook deploy.yml --limit web-01" output="Exécuter uniquement sur un host spécifique" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --tags deploy" output="Executer uniquement les taches avec le tag 'deploy'" />
+<TerminalBlock command="ansible-playbook deploy.yml --tags deploy" output="Exécuter uniquement les taches avec le tag 'deploy'" />
 
 ---
 
@@ -182,11 +182,11 @@ server {
 | `apt` / `yum` | Gestion des paquets |
 | `copy` | Copier des fichiers |
 | `template` | Deployer des templates Jinja2 |
-| `file` | Gerer fichiers et repertoires |
-| `service` / `systemd` | Gerer les services |
-| `user` / `group` | Gerer utilisateurs et groupes |
+| `file` | Gérer fichiers et répertoires |
+| `service` / `systemd` | Gérer les services |
+| `user` / `group` | Gérer utilisateurs et groupes |
 | `git` | Cloner des repos |
-| `docker_container` | Gerer des conteneurs Docker |
+| `docker_container` | Gérer des conteneurs Docker |
 | `uri` | Requetes HTTP |
 | `wait_for` | Attendre qu'un port soit ouvert |
 
@@ -195,11 +195,11 @@ server {
 ## Bonnes pratiques
 
 - **Idempotence** : relancer le playbook ne doit rien casser
-- **Handlers** : utiliser `notify` pour les redemarrages de services
+- **Handlers** : utiliser `notify` pour les redémarrages de services
 - **Vault** : chiffrer les secrets avec `ansible-vault`
 - **Tags** : taguer les taches pour des executions selectivement
 - **Check mode** : toujours tester avec `--check` avant d'appliquer
 
 <TerminalBlock command="ansible-vault encrypt vars/secrets.yml" output="Chiffrer un fichier de secrets" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --ask-vault-pass" output="Executer avec un fichier vault" />
+<TerminalBlock command="ansible-playbook deploy.yml --ask-vault-pass" output="Exécuter avec un fichier vault" />

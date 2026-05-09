@@ -28,9 +28,9 @@ worker-02     Ready    <none>          30d   v1.31.0   10.0.0.12" />
 
 <TerminalBlock command="kubectl describe pod mon-pod" />
 
-<TerminalBlock command="kubectl logs mon-pod -f --tail=100" output="Suivre les 100 dernieres lignes de logs" />
+<TerminalBlock command="kubectl logs mon-pod -f --tail=100" output="Suivre les 100 dernières lignes de logs" />
 
-<TerminalBlock command="kubectl logs mon-pod -c sidecar" output="Logs d'un conteneur specifique dans un pod multi-conteneur" />
+<TerminalBlock command="kubectl logs mon-pod -c sidecar" output="Logs d'un conteneur spécifique dans un pod multi-conteneur" />
 
 <TerminalBlock command="kubectl exec -it mon-pod -- /bin/sh" />
 
@@ -93,7 +93,7 @@ spec:
 
 <TerminalBlock command="kubectl rollout history deployment/api" />
 
-<TerminalBlock command="kubectl rollout undo deployment/api" output="Rollback a la version precedente" />
+<TerminalBlock command="kubectl rollout undo deployment/api" output="Rollback a la version précédente" />
 
 <TerminalBlock command="kubectl scale deployment/api --replicas=5" />
 
@@ -164,13 +164,13 @@ spec:
 
 <TerminalBlock command="kubectl get events --sort-by=.metadata.creationTimestamp" />
 
-<TerminalBlock command="kubectl top pods" output="CPU et memoire des pods (metrics-server requis)" />
+<TerminalBlock command="kubectl top pods" output="CPU et mémoire des pods (metrics-server requis)" />
 
 <TerminalBlock command="kubectl top nodes" />
 
-<TerminalBlock command="kubectl run debug --image=busybox -it --rm -- sh" output="Pod ephemere pour debugger le reseau" />
+<TerminalBlock command="kubectl run debug --image=busybox -it --rm -- sh" output="Pod éphémère pour debugger le réseau" />
 
-<TerminalBlock command="kubectl get pods -o jsonpath='{.items[*].status.phase}'" output="Extraire des champs specifiques avec JSONPath" />
+<TerminalBlock command="kubectl get pods -o jsonpath='{.items[*].status.phase}'" output="Extraire des champs spécifiques avec JSONPath" />
 
 ---
 

@@ -2,16 +2,16 @@
 title: Design CI/CD
 category: concepts
 description: Concevoir des pipelines CI/CD robustes — du commit a la production
-tags: [cicd, pipeline, deploiement, integration-continue, livraison-continue]
+tags: [cicd, pipeline, déploiement, integration-continue, livraison-continue]
 ---
 
 ## CI vs CD vs CD
 
 | Concept | Signification | Automatise |
 |---------|--------------|------------|
-| **CI** — Continuous Integration | Merger frequemment, build + tests automatiques | Build, lint, tests |
-| **CD** — Continuous Delivery | Chaque commit est *pret* a etre deploye | + staging, approval gates |
-| **CD** — Continuous Deployment | Chaque commit est *automatiquement* deploye | + production, no gates |
+| **CI** — Continuous Integration | Merger fréquemment, build + tests automatiques | Build, lint, tests |
+| **CD** — Continuous Delivery | Chaque commit est *pret* à être déployé | + staging, approval gates |
+| **CD** — Continuous Deployment | Chaque commit est *automatiquement* déployé | + production, no gates |
 
 ---
 
@@ -32,7 +32,7 @@ Commit → Lint → Build → Test → Scan → Stage → Approve → Deploy
 
 ---
 
-## Strategies de deploiement
+## Stratégies de déploiement
 
 ### Rolling Update
 
@@ -43,7 +43,7 @@ v1 v1 v1 v1    (etat initial)
 v2 v1 v1 v1    (1/4 mis a jour)
 v2 v2 v1 v1    (2/4 mis a jour)
 v2 v2 v2 v1    (3/4 mis a jour)
-v2 v2 v2 v2    (deploiement termine)
+v2 v2 v2 v2    (déploiement termine)
 ```
 
 **Avantages** : simple, zero downtime
@@ -76,7 +76,7 @@ Si OK → augmenter progressivement
 Si KO → rollback immediat
 ```
 
-**Avantages** : risque minimal, validation en production reelle
+**Avantages** : risque minimal, validation en productionréelle
 **Risques** : plus complexe a implementer
 
 ---
@@ -85,15 +85,15 @@ Si KO → rollback immediat
 
 ### Pipeline
 
-- **Fail fast** : les etapes rapides en premier (lint avant les tests e2e)
+- **Fail fast** : les étapes rapides en premier (lint avant les tests e2e)
 - **Paralleliser** : tests unitaires en parallele des tests d'integration
 - **Cache** : dependencies, images Docker, artefacts
-- **Idempotent** : relancer le pipeline doit produire le meme resultat
-- **Immutable artifacts** : un artefact build une fois, deploye partout
+- **Idempotent** : relancer le pipeline doit produire le même résultat
+- **Immutable artifacts** : un artefact build une fois, déployé partout
 
-### Securite (DevSecOps)
+### Sécurité (DevSecOps)
 
-- **Shift left** : integrer la securite tot dans le pipeline
+- **Shift left** : intégrer la sécurité tôt dans le pipeline
 - **SAST** : analyse statique du code (Semgrep, SonarQube)
 - **SCA** : scan des dependances (Dependabot, Snyk)
 - **Container scanning** : vulnerabilites dans les images Docker (Trivy)
@@ -113,14 +113,14 @@ Production: le vrai deal
 
 ## Feature Flags
 
-Decoupler le deploiement de la release :
+Découpler le déploiement de la release :
 
 ```
-Deploiement : le code est en production
+Déploiement : le code est en production
 Release     : la fonctionnalite est activee pour les utilisateurs
 ```
 
 - Activer progressivement (1% → 10% → 50% → 100%)
 - Tester en production sans risque
-- Kill switch instantane en cas de probleme
+- Kill switch instantané en cas de probleme
 - A/B testing natif

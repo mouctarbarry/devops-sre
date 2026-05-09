@@ -1,8 +1,8 @@
 ---
 title: Principes SRE
 category: concepts
-description: Site Reliability Engineering — les principes de Google pour operer des systemes fiables a grande echelle
-tags: [sre, fiabilite, sli, slo, error-budget, toil]
+description: Site Reliability Engineering — les principes de Google pour operer des systèmes fiables a grande échelle
+tags: [sre, fiabilité, sli, slo, error-budget, toil]
 ---
 
 ## SRE en bref
@@ -29,7 +29,7 @@ Metrique quantitative de la qualite du service.
 
 ### SLO (Service Level Objective)
 
-Cible interne pour un SLI. Exemple : *99.9% de disponibilite sur 30 jours glissants*.
+Cible interne pour un SLI. Exemple : *99.9% de disponibilité sur 30 jours glissants*.
 
 <TerminalBlock
   command="# Calcul du budget d'erreur pour 99.9% SLO sur 30 jours"
@@ -38,18 +38,18 @@ Cible interne pour un SLI. Exemple : *99.9% de disponibilite sur 30 jours glissa
 
 ### SLA (Service Level Agreement)
 
-Contrat avec les clients. Toujours moins ambitieux que le SLO (marge de securite).
+Contrat avec les clients. Toujours moins ambitieux que le SLO (marge de sécurité).
 
 ```
 SLA ≤ SLO ≤ realite mesuree
-Exemple : SLA 99.5% < SLO 99.9% < mesure reelle 99.95%
+Exemple : SLA 99.5% < SLO 99.9% < mesureréelle 99.95%
 ```
 
 ---
 
 ## Error Budget
 
-L'error budget est la difference entre 100% et votre SLO. C'est la quantite de fiabilite que vous pouvez "depenser" pour aller plus vite.
+L'error budget est la différence entre 100% et votre SLO. C'est la quantité de fiabilité que vous pouvez "dépenser" pour aller plus vite.
 
 | SLO | Error Budget (30 jours) |
 |-----|------------------------|
@@ -60,9 +60,9 @@ L'error budget est la difference entre 100% et votre SLO. C'est la quantite de f
 | 99.99% | 4min 19s |
 
 **Politique d'error budget :**
-- Budget restant > 50% → deploiements normaux, experimentation autorisee
-- Budget restant 10-50% → deploiements prudents, revues supplementaires
-- Budget epuise → gel des deploiements, focus fiabilite
+- Budget restant > 50% → déploiements normaux, expérimentation autorisée
+- Budget restant 10-50% → déploiements prudents, revues supplémentaires
+- Budget épuisé → gel des déploiements, focus fiabilité
 
 ---
 
@@ -73,14 +73,14 @@ Le toil est le travail operationnel manuel, repetitif, automatisable et sans val
 ### Caracteristiques du toil
 
 - **Manuel** : un humain doit intervenir
-- **Repetitif** : meme tache encore et encore
+- **Répétitif** : même tâche encore et encore
 - **Automatisable** : un script pourrait le faire
-- **Reactif** : declenche par un evenement, pas proactif
-- **Sans valeur durable** : pas d'amelioration permanente du service
+- **Réactif** : déclenché par un événement, pas proactif
+- **Sans valeur durable** : pas d'amélioration permanente du service
 
 ### Regle des 50%
 
-Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est consacre a l'ingenierie : automatisation, amelioration des outils, projets de fiabilite.
+Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est consacré a l'ingénierie : automatisation, amélioration des outils, projets de fiabilité.
 
 ---
 
@@ -100,12 +100,12 @@ Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est 
 - **Incident Commander (IC)** : coordonne la reponse
 - **Communication Lead** : informe les stakeholders
 - **Operations Lead** : execute les actions techniques
-- **Subject Matter Experts** : expertise specifique au probleme
+- **Subject Matter Experts** : expertise spécifique au probleme
 
 ### Post-mortem blameless
 
-1. **Timeline** : chronologie des evenements
-2. **Impact** : metriques affectees, duree, utilisateurs touches
+1. **Timeline** : chronologie des événements
+2. **Impact** : métriques affectées, durée, utilisateurs touchés
 3. **Root cause** : analyse des causes profondes (5 Whys)
 4. **Action items** : correctifs concrets avec owners et deadlines
 5. **Lessons learned** : ce qu'on a appris
@@ -130,7 +130,7 @@ Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est 
       /   \
      / TICKET \  → degradation non urgente
     /         \
-   / DASHBOARD \ → metriques de surveillance
+   / DASHBOARD \ → métriques de surveillance
   /             \
  /    LOGS       \ → debug, investigation
 /                 \

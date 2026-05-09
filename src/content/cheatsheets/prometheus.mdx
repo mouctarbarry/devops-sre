@@ -2,7 +2,7 @@
 title: Prometheus
 category: monitoring
 description: Cheatsheet Prometheus — PromQL, alerting, instrumentation et bonnes pratiques
-tags: [prometheus, monitoring, promql, alerting, metriques]
+tags: [prometheus, monitoring, promql, alerting, métriques]
 ---
 
 ## Architecture
@@ -20,7 +20,7 @@ tags: [prometheus, monitoring, promql, alerting, metriques]
 
 ---
 
-## Types de metriques
+## Types de métriques
 
 | Type | Description | Exemple |
 |------|-------------|---------|
@@ -65,7 +65,7 @@ irate(http_requests_total[5m])
 ### Agregation
 
 ```promql
-# Somme par methode HTTP
+# Somme par méthode HTTP
 sum by (method) (rate(http_requests_total[5m]))
 
 # Moyenne par instance
@@ -99,7 +99,7 @@ rate(http_request_duration_seconds_count[5m])
 
 ---
 
-## RED Method — metriques pour les services
+## RED Method — métriques pour les services
 
 | Metrique | PromQL |
 |----------|--------|
@@ -107,7 +107,7 @@ rate(http_request_duration_seconds_count[5m])
 | **E**rrors | `sum(rate(http_requests_total{status=~"5.."}[5m]))` |
 | **D**uration | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
 
-## USE Method — metriques pour les ressources
+## USE Method — métriques pour les ressources
 
 | Metrique | Exemple |
 |----------|---------|
@@ -134,7 +134,7 @@ groups:
           severity: critical
         annotations:
           summary: "Taux d'erreur > 5%"
-          description: "{{ $value | humanizePercentage }} des requetes echouent"
+          description: "{{ $value | humanizePercentage }} des requetes échouent"
 
       - alert: HighLatency
         expr: |

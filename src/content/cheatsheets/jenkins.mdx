@@ -1,0 +1,299 @@
+---
+title: "Jenkins"
+category: "cicd"
+description: "Pipelines Jenkins, Jenkinsfile, agents et bonnes pratiques CI/CD."
+tags: [jenkins, cicd, pipeline, automatisation, devops]
+---
+
+## Architecture
+
+Jenkins fonctionne sur un modèle **Controller / Agent** :
+
+| Composant | Rôle |
+|-----------|------|
+| **Controller** | Orchestration, interface web, configuration des jobs |
+| **Agent** | Exécution des builds sur des machines dédiées |
+| **Executor** | Thread d'exécution sur un agent (plusieurs par agent) |
+| **Plugin** | Extension des fonctionnalités (Git, Docker, Slack, etc.) |
+
+## Jenkinsfile — Pipeline déclarative
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        NODE_ENV = 'production'
+        REGISTRY = 'registry.example.com'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm ci'
+                sh 'npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh './deploy.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Déploiement réussi !'
+        }
+        failure {
+            echo 'Échec du pipeline'
+        }
+    }
+}
+```
+
+## Agents
+
+### Agent global
+
+```groovy
+pipeline {
+    agent any
+    // Exécute sur n'importe quel agent disponible
+}
+```
+
+### Agent Docker
+
+```groovy
+pipeline {
+    agent {
+        docker {
+            image 'node:20-alpine'
+            args '-v /tmp:/tmp'
+        }
+    }
+}
+```
+
+### Agent Kubernetes
+
+```groovy
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                  - name: maven
+                    image: maven:3.9-eclipse-temurin-21
+                    command: ['sleep']
+                    args: ['infinity']
+            '''
+        }
+    }
+}
+```
+
+### Agent par label
+
+```groovy
+pipeline {
+    agent { label 'linux && docker' }
+}
+```
+
+## Variables & Paramètres
+
+### Variables d'environnement
+
+```groovy
+environment {
+    APP_VERSION = sh(script: 'cat VERSION', returnStdout: true).trim()
+    DB_CREDS = credentials('db-credentials')
+    // DB_CREDS_USR et DB_CREDS_PSW sont créés automatiquement
+}
+```
+
+### Paramètres de build
+
+```groovy
+parameters {
+    string(name: 'BRANCH', defaultValue: 'main', description: 'Branche à déployer')
+    choice(name: 'ENV', choices: ['dev', 'staging', 'prod'], description: 'Environnement cible')
+    booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Ignorer les tests')
+}
+```
+
+Utilisation : `${params.BRANCH}`, `${params.ENV}`
+
+### Credentials
+
+```groovy
+withCredentials([
+    usernamePassword(
+        credentialsId: 'docker-hub',
+        usernameVariable: 'DOCKER_USER',
+        passwordVariable: 'DOCKER_PASS'
+    )
+]) {
+    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+}
+```
+
+## Triggers
+
+```groovy
+triggers {
+    // Vérifier le SCM toutes les 5 minutes
+    pollSCM('H/5 * * * *')
+
+    // Build planifié (cron)
+    cron('H 2 * * 1-5')
+
+    // Déclenché par un autre job
+    upstream(upstreamProjects: 'build-lib', threshold: hudson.model.Result.SUCCESS)
+}
+```
+
+Pour les webhooks GitHub/GitLab, configurer le plugin correspondant et activer le trigger dans la configuration du job.
+
+## Étapes parallèles
+
+```groovy
+stage('Tests') {
+    parallel {
+        stage('Unit Tests') {
+            steps {
+                sh 'npm run test:unit'
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                sh 'npm run test:integration'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'npm run lint'
+            }
+        }
+    }
+}
+```
+
+## Post actions
+
+```groovy
+post {
+    always {
+        // Toujours exécuté (nettoyage, rapports)
+        junit '**/test-results/*.xml'
+        archiveArtifacts artifacts: 'dist/**', allowEmptyArchive: true
+    }
+    success {
+        slackSend channel: '#deploys', message: "✅ ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+    }
+    failure {
+        slackSend channel: '#alerts', message: "❌ ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+    }
+    unstable {
+        echo 'Tests instables détectés'
+    }
+    changed {
+        echo 'Le statut du build a changé'
+    }
+}
+```
+
+## Pipeline avancée
+
+### Conditions (when)
+
+```groovy
+stage('Deploy Prod') {
+    when {
+        allOf {
+            branch 'main'
+            not { changeRequest() }
+            environment name: 'DEPLOY', value: 'true'
+        }
+    }
+    steps {
+        sh './deploy-prod.sh'
+    }
+}
+```
+
+### Input (approbation manuelle)
+
+```groovy
+stage('Approval') {
+    steps {
+        input message: 'Déployer en production ?', ok: 'Déployer'
+    }
+}
+```
+
+### Shared Libraries
+
+```groovy
+// Jenkinsfile
+@Library('my-shared-lib') _
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                buildApp(language: 'node', version: '20')
+            }
+        }
+    }
+}
+```
+
+Structure de la librairie partagée :
+
+```
+vars/
+  buildApp.groovy      # Fonctions globales
+  deployTo.groovy
+src/
+  org/example/Utils.groovy  # Classes
+resources/
+  templates/                # Fichiers de configuration
+```
+
+## Bonnes pratiques
+
+| Pratique | Détail |
+|----------|--------|
+| **Pipeline as Code** | Jenkinsfile versionné dans le dépôt Git |
+| **Déclaratif** | Préférer la syntaxe déclarative à la scriptée |
+| **Agents éphémères** | Utiliser Docker/K8s pour des environnements propres |
+| **Credentials** | Jamais de secrets en dur, toujours `credentials()` |
+| **Parallélisme** | Exécuter les tests en parallèle pour réduire la durée |
+| **Shared Libraries** | Factoriser la logique commune entre pipelines |
+| **Nettoyage** | `cleanWs()` en post-action pour libérer l'espace |

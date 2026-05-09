@@ -1,0 +1,163 @@
+---
+title: "Azure"
+category: "cloud"
+description: "Services Azure essentiels, CLI et architecture cloud pour le DevOps."
+tags: [azure, cloud, cli, devops, infrastructure]
+---
+
+## Azure CLI — Configuration
+
+<TerminalBlock command="az login" />
+
+<TerminalBlock command="az account list --output table" />
+
+<TerminalBlock command="az account set --subscription 'Mon Abonnement'" />
+
+<TerminalBlock command="az group create --name rg-projet --location westeurope" />
+
+## Compute
+
+### Machines virtuelles
+
+<TerminalBlock command="az vm create --resource-group rg-projet --name vm-web --image Ubuntu2204 --admin-username azureuser --generate-ssh-keys --size Standard_B2s" />
+
+<TerminalBlock command="az vm list --resource-group rg-projet --output table" />
+
+<TerminalBlock command="az vm start --resource-group rg-projet --name vm-web" />
+
+<TerminalBlock command="az vm stop --resource-group rg-projet --name vm-web" />
+
+<TerminalBlock command="az vm delete --resource-group rg-projet --name vm-web --yes" />
+
+### Azure Kubernetes Service (AKS)
+
+<TerminalBlock command="az aks create --resource-group rg-projet --name aks-cluster --node-count 3 --generate-ssh-keys --network-plugin azure" />
+
+<TerminalBlock command="az aks get-credentials --resource-group rg-projet --name aks-cluster" />
+
+<TerminalBlock command="az aks scale --resource-group rg-projet --name aks-cluster --node-count 5" />
+
+### App Service
+
+<TerminalBlock command="az webapp create --resource-group rg-projet --plan plan-web --name mon-app --runtime 'NODE:20-lts'" />
+
+<TerminalBlock command="az webapp deployment source config --resource-group rg-projet --name mon-app --repo-url https://github.com/user/repo --branch main" />
+
+## Stockage
+
+### Blob Storage
+
+<TerminalBlock command="az storage account create --name stockageprojet --resource-group rg-projet --location westeurope --sku Standard_LRS" />
+
+<TerminalBlock command="az storage container create --name conteneur --account-name stockageprojet" />
+
+<TerminalBlock command="az storage blob upload --account-name stockageprojet --container-name conteneur --name fichier.txt --file ./fichier.txt" />
+
+<TerminalBlock command="az storage blob list --account-name stockageprojet --container-name conteneur --output table" />
+
+<TerminalBlock command="az storage blob download --account-name stockageprojet --container-name conteneur --name fichier.txt --file ./fichier-dl.txt" />
+
+## Réseau
+
+### VNet & Sous-réseaux
+
+<TerminalBlock command="az network vnet create --resource-group rg-projet --name vnet-prod --address-prefix 10.0.0.0/16 --subnet-name subnet-web --subnet-prefix 10.0.1.0/24" />
+
+### Network Security Group
+
+<TerminalBlock command="az network nsg create --resource-group rg-projet --name nsg-web" />
+
+<TerminalBlock command="az network nsg rule create --resource-group rg-projet --nsg-name nsg-web --name AllowHTTP --priority 100 --destination-port-ranges 80 443 --access Allow --protocol Tcp --direction Inbound" />
+
+### Load Balancer
+
+<TerminalBlock command="az network lb create --resource-group rg-projet --name lb-web --sku Standard --frontend-ip-name frontend --backend-pool-name pool-web" />
+
+## Identité & Sécurité
+
+### Entra ID (Azure AD)
+
+<TerminalBlock command="az ad user list --output table" />
+
+<TerminalBlock command="az ad group create --display-name devops-team --mail-nickname devops" />
+
+### RBAC
+
+<TerminalBlock command="az role assignment create --assignee user@domain.com --role Contributor --scope /subscriptions/{sub-id}/resourceGroups/rg-projet" />
+
+<TerminalBlock command="az role assignment list --resource-group rg-projet --output table" />
+
+### Key Vault
+
+<TerminalBlock command="az keyvault create --name kv-projet --resource-group rg-projet --location westeurope" />
+
+<TerminalBlock command="az keyvault secret set --vault-name kv-projet --name db-password --value 'MotDePasseSecret'" />
+
+<TerminalBlock command="az keyvault secret show --vault-name kv-projet --name db-password --query value --output tsv" />
+
+## Base de données
+
+### Azure SQL
+
+<TerminalBlock command="az sql server create --name sql-projet --resource-group rg-projet --location westeurope --admin-user sqladmin --admin-password 'P@ssw0rd'" />
+
+<TerminalBlock command="az sql db create --resource-group rg-projet --server sql-projet --name db-app --service-objective S1" />
+
+### PostgreSQL Flexible Server
+
+<TerminalBlock command="az postgres flexible-server create --resource-group rg-projet --name pg-projet --location westeurope --admin-user pgadmin --admin-password 'P@ssw0rd' --sku-name Standard_B1ms --tier Burstable" />
+
+## DevOps & Container Registry
+
+### Azure Container Registry (ACR)
+
+<TerminalBlock command="az acr create --resource-group rg-projet --name acrprojet --sku Basic" />
+
+<TerminalBlock command="az acr login --name acrprojet" />
+
+<TerminalBlock command="docker tag mon-app:latest acrprojet.azurecr.io/mon-app:v1" />
+
+<TerminalBlock command="docker push acrprojet.azurecr.io/mon-app:v1" />
+
+Attacher ACR à AKS :
+
+<TerminalBlock command="az aks update --resource-group rg-projet --name aks-cluster --attach-acr acrprojet" />
+
+### Azure Pipelines (exemple)
+
+```yaml
+trigger:
+  - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "20.x"
+
+  - script: |
+      npm ci
+      npm run build
+      npm test
+    displayName: "Build & Test"
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: "ma-connexion"
+      appName: "mon-app"
+      package: "$(System.DefaultWorkingDirectory)"
+```
+
+## Bonnes pratiques
+
+| Pratique | Détail |
+|----------|--------|
+| **Resource Groups** | Un groupe par environnement (rg-dev, rg-staging, rg-prod) |
+| **Nommage** | Convention cohérente : `{type}-{projet}-{env}` |
+| **Tags** | Toujours taguer : `environment`, `owner`, `cost-center` |
+| **Coûts** | Activer Azure Cost Management et les alertes budgétaires |
+| **Verrous** | `CanNotDelete` sur les ressources critiques en production |
+| **IaC** | Préférer Terraform ou Bicep aux déploiements manuels |
+| **Monitoring** | Azure Monitor + Log Analytics sur chaque ressource |

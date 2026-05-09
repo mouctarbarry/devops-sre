@@ -28,11 +28,11 @@ Grafana est la couche de visualisation. Il se connecte a des data sources pour a
 
 | Data Source | Usage |
 |------------|-------|
-| **Prometheus** | Metriques time-series |
+| **Prometheus** | Métriques time-series |
 | **Loki** | Logs agreres |
 | **Elasticsearch** | Logs et search |
 | **PostgreSQL** | Donnees relationnelles |
-| **CloudWatch** | Metriques AWS |
+| **CloudWatch** | Métriques AWS |
 | **InfluxDB** | Time-series IoT |
 
 ---
@@ -41,7 +41,7 @@ Grafana est la couche de visualisation. Il se connecte a des data sources pour a
 
 ### Time series
 
-Le panel le plus utilise. Affiche des metriques au fil du temps.
+Le panel le plus utilisé. Affiche des métriques au fil du temps.
 
 ```promql
 # Requetes par seconde
@@ -185,12 +185,12 @@ providers:
 1. **Latence** : P50, P95, P99 des temps de reponse
 2. **Trafic** : Requetes par seconde
 3. **Erreurs** : Taux d'erreur 4xx et 5xx
-4. **Saturation** : CPU, memoire, connections DB
+4. **Saturation** : CPU, mémoire, connections DB
 
 ### Infrastructure
 
-- **Node Exporter** : CPU, memoire, disque, reseau par node
-- **Container metrics** : CPU/memoire par pod (cAdvisor)
+- **Node Exporter** : CPU, mémoire, disque, réseau par node
+- **Container metrics** : CPU/mémoire par pod (cAdvisor)
 - **Kubernetes** : pods, deployments, nodes, events
 
 ---
@@ -199,7 +199,7 @@ providers:
 
 - **Un dashboard par service** : pas de mega-dashboard
 - **Variables** : rendre les dashboards parametrables
-- **Annotations** : marquer les deploiements et incidents
+- **Annotations** : marquer les déploiements et incidents
 - **Seuils** : vert/jaune/rouge pour chaque metrique
 - **Dashboard as Code** : versionner les dashboards en Git
 - **Folders** : organiser par equipe ou domaine

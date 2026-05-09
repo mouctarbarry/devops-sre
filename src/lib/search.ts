@@ -1,6 +1,9 @@
-import type { CheatsheetMeta } from './cheatsheets';
+import type { CheatsheetMeta } from "./cheatsheets";
 
-export function searchCheatsheets(cheatsheets: CheatsheetMeta[], query: string): CheatsheetMeta[] {
+export function searchCheatsheets(
+  cheatsheets: CheatsheetMeta[],
+  query: string,
+): CheatsheetMeta[] {
   const q = query.toLowerCase().trim();
   if (!q) return cheatsheets;
 

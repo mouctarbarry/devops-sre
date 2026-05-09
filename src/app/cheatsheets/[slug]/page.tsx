@@ -1,11 +1,12 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import { getAllSlugs, getCheatsheetBySlug } from '@/lib/cheatsheets';
-import { CATEGORIES } from '@/lib/categories';
-import { TerminalBlock } from '@/components/terminal-block';
-import { Footer } from '@/components/footer';
-import type { Metadata } from 'next';
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import rehypePrettyCode from "rehype-pretty-code";
+import { getAllSlugs, getCheatsheetBySlug } from "@/lib/cheatsheets";
+import { CATEGORIES } from "@/lib/categories";
+import { TerminalBlock } from "@/components/terminal-block";
+import { Footer } from "@/components/footer";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,7 +16,9 @@ export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const cheatsheet = getCheatsheetBySlug(slug);
   if (!cheatsheet) return {};
@@ -49,12 +52,15 @@ export default async function CheatsheetPage({ params }: PageProps) {
         </nav>
 
         <header className="mb-8">
-          <div className="mb-2 flex items-center gap-2">
-            <span>{category.icon}</span>
-            <span className="text-sm text-muted-foreground">{category.label}</span>
-          </div>
-          <h1 className="mb-2 font-mono text-4xl font-bold">{cheatsheet.title}</h1>
-          <p className="text-lg text-muted-foreground">{cheatsheet.description}</p>
+          <span className="mb-2 inline-block rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            {category.label}
+          </span>
+          <h1 className="mb-2 font-mono text-4xl font-bold">
+            {cheatsheet.title}
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            {cheatsheet.description}
+          </p>
           <div className="mt-3 flex flex-wrap gap-1">
             {cheatsheet.tags.map((tag) => (
               <span
@@ -68,7 +74,23 @@ export default async function CheatsheetPage({ params }: PageProps) {
         </header>
 
         <article className="prose prose-neutral dark:prose-invert max-w-none">
-          <MDXRemote source={cheatsheet.content} components={mdxComponents} />
+          <MDXRemote
+            source={cheatsheet.content}
+            components={mdxComponents}
+            options={{
+              mdxOptions: {
+                rehypePlugins: [
+                  [
+                    rehypePrettyCode,
+                    {
+                      theme: "one-dark-pro",
+                      keepBackground: true,
+                    },
+                  ],
+                ],
+              },
+            }}
+          />
         </article>
       </main>
 

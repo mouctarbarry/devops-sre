@@ -14,9 +14,9 @@ set -euo pipefail
 
 | Flag | Effet |
 |------|-------|
-| `set -e` | Arreter si une commande echoue |
-| `set -u` | Erreur si une variable est non definie |
-| `set -o pipefail` | Un pipe echoue si n'importe quelle commande echoue |
+| `set -e` | Arreter si une commande échoue |
+| `set -u` | Erreur si une variable est non définie |
+| `set -o pipefail` | Un pipe échoue si n'importe quelle commande échoue |
 
 ---
 
@@ -35,8 +35,8 @@ echo "Version: ${VERSION}"
 export DATABASE_URL="postgres://localhost:5432/mydb"
 
 # Substitution par defaut
-echo "${PORT:-3000}"       # 3000 si PORT est vide ou non defini
-echo "${PORT:=3000}"       # Assigne 3000 si non defini
+echo "${PORT:-3000}"       # 3000 si PORT est vide ou non défini
+echo "${PORT:=3000}"       # Assigne 3000 si non défini
 ```
 
 ---
@@ -55,7 +55,7 @@ fi
 
 # Test de fichier
 [[ -f "config.yml" ]]    # Le fichier existe
-[[ -d "/var/log" ]]      # Le repertoire existe
+[[ -d "/var/log" ]]      # Le répertoire existe
 [[ -x "script.sh" ]]     # Le fichier est executable
 [[ -z "$VAR" ]]          # La variable est vide
 [[ -n "$VAR" ]]          # La variable n'est pas vide
@@ -148,7 +148,7 @@ command 2>&1              # Stderr vers stdout
 
 <TerminalBlock command="kill -9 1234" output="SIGKILL — arret force (dernier recours)" />
 
-<TerminalBlock command="nohup ./script.sh &" output="Executer en arriere-plan, survit a la deconnexion" />
+<TerminalBlock command="nohup ./script.sh &" output="Exécuter en arriere-plan, survit a la deconnexion" />
 
 <TerminalBlock command="jobs -l" output="Lister les jobs en arriere-plan" />
 
@@ -158,13 +158,13 @@ command 2>&1              # Stderr vers stdout
 
 <TerminalBlock command="xargs -I{} -P4 curl -s {} < urls.txt" output="Requetes paralleles (4 a la fois)" />
 
-<TerminalBlock command="watch -n 5 'kubectl get pods'" output="Executer une commande toutes les 5 secondes" />
+<TerminalBlock command="watch -n 5 'kubectl get pods'" output="Exécuter une commande toutes les 5 secondes" />
 
 <TerminalBlock command="timeout 30 ./long-script.sh" output="Limiter l'execution a 30 secondes" />
 
 <TerminalBlock command="date -u +%Y-%m-%dT%H:%M:%SZ" output="Date au format ISO 8601 UTC" />
 
-<TerminalBlock command="du -sh */ | sort -rh | head -10" output="Top 10 des repertoires les plus volumineux" />
+<TerminalBlock command="du -sh */ | sort -rh | head -10" output="Top 10 des répertoires les plus volumineux" />
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: Docker
 category: conteneurisation
-description: Cheatsheet Docker — images, conteneurs, volumes, reseaux et Docker Compose
+description: Cheatsheet Docker — images, conteneurs, volumes, réseaux et Docker Compose
 tags: [docker, conteneurs, images, compose, dockerfile]
 ---
 
@@ -20,7 +20,7 @@ mon-app       1.0    a1b2c3d4e5f6   2 minutes ago  150MB" />
 
 <TerminalBlock command="docker rmi mon-app:1.0" />
 
-<TerminalBlock command="docker image prune -a" output="Supprime toutes les images non utilisees" />
+<TerminalBlock command="docker image prune -a" output="Supprime toutes les images non utilisées" />
 
 ---
 
@@ -35,11 +35,11 @@ f1a2b3c4d5e6   nginx:alpine   ...       Up 5s     0.0.0.0:8080->80/tcp   web" />
 
 <TerminalBlock command="docker exec -it web sh" output="Ouvre un shell interactif dans le conteneur" />
 
-<TerminalBlock command="docker logs -f web" output="Suivre les logs en temps reel" />
+<TerminalBlock command="docker logs -f web" output="Suivre les logs en tempsréel" />
 
 <TerminalBlock command="docker stop web && docker rm web" />
 
-<TerminalBlock command="docker stats" output="Monitorer CPU, memoire, I/O en temps reel" />
+<TerminalBlock command="docker stats" output="Monitorer CPU, mémoire, I/O en tempsréel" />
 
 ---
 
@@ -87,7 +87,7 @@ CMD ["npx", "serve", "out"]
 
 ---
 
-## Reseaux
+## Réseaux
 
 <TerminalBlock command="docker network create app-net" />
 
@@ -142,4 +142,4 @@ volumes:
 
 <TerminalBlock command="docker system prune -a --volumes" output="Supprime TOUT : conteneurs arretes, images, volumes orphelins" />
 
-<TerminalBlock command="docker system df" output="Voir l'espace disque utilise par Docker" />
+<TerminalBlock command="docker system df" output="Voir l'espace disque utilisé par Docker" />

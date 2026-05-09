@@ -1,9 +1,13 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { CATEGORIES } from '@/lib/categories';
-import type { CheatsheetMeta } from '@/lib/cheatsheets';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { CATEGORIES } from "@/lib/categories";
+import type { CheatsheetMeta } from "@/lib/cheatsheets";
 
-export function CheatsheetCard({ cheatsheet }: { cheatsheet: CheatsheetMeta }) {
+export function CheatsheetCard({
+  cheatsheet,
+}: {
+  cheatsheet: CheatsheetMeta;
+}) {
   const category = CATEGORIES[cheatsheet.category];
 
   return (
@@ -11,10 +15,9 @@ export function CheatsheetCard({ cheatsheet }: { cheatsheet: CheatsheetMeta }) {
       href={`/cheatsheets/${cheatsheet.slug}`}
       className="group block rounded-xl border border-border bg-card p-6 transition-all duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
     >
-      <div className="mb-2 flex items-center gap-2">
-        <span>{category.icon}</span>
-        <span className="text-xs font-medium text-muted-foreground">{category.label}</span>
-      </div>
+      <span className="mb-2 inline-block rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
+        {category.label}
+      </span>
 
       <h3 className="mb-2 font-mono text-lg font-bold tracking-tight group-hover:text-primary">
         {cheatsheet.title}

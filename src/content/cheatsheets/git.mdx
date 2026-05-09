@@ -21,7 +21,7 @@ tags: [git, versionning, branches, rebase, merge]
 
 <TerminalBlock command="git status" output="Voir les fichiers modifies, stages et non-trackes" />
 
-<TerminalBlock command="git add fichier.ts" output="Stager un fichier specifique" />
+<TerminalBlock command="git add fichier.ts" output="Stager un fichier spécifique" />
 
 <TerminalBlock command="git add -p" output="Stager interactivement (par hunk)" />
 
@@ -90,7 +90,7 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 <TerminalBlock command="git stash pop" output="Restaurer et supprimer le dernier stash" />
 
-<TerminalBlock command="git stash apply stash@{1}" output="Restaurer un stash specifique sans le supprimer" />
+<TerminalBlock command="git stash apply stash@{1}" output="Restaurer un stash spécifique sans le supprimer" />
 
 <TerminalBlock command="git stash drop stash@{0}" output="Supprimer un stash" />
 
@@ -112,7 +112,7 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 <TerminalBlock command="git blame fichier.ts" output="Voir qui a modifie chaque ligne" />
 
-<TerminalBlock command="git show abc1234" output="Details d'un commit specifique" />
+<TerminalBlock command="git show abc1234" output="Details d'un commit spécifique" />
 
 ---
 
@@ -144,7 +144,7 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 ## Cherry-pick
 
-<TerminalBlock command="git cherry-pick abc1234" output="Appliquer un commit specifique sur la branche courante" />
+<TerminalBlock command="git cherry-pick abc1234" output="Appliquer un commit spécifique sur la branche courante" />
 
 <TerminalBlock command="git cherry-pick abc1234 def5678" output="Cherry-pick de plusieurs commits" />
 
@@ -153,7 +153,7 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 ## Bonnes pratiques
 
 - **Conventional Commits** : `type(scope): description`
-- **Branches courtes** : merger rapidement, eviter les branches longues
+- **Branches courtes** : merger rapidement, éviter les branches longues
 - **Pull --rebase** : garder un historique lineaire
 - **Ne jamais force push sur main**
 - **.gitignore** : ignorer `node_modules/`, `.env`, `dist/`, `.next/`
