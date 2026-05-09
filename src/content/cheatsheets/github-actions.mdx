@@ -1,0 +1,266 @@
+---
+title: GitHub Actions
+category: cicd
+description: Cheatsheet GitHub Actions — workflows, jobs, steps, secrets et patterns courants
+tags: [github-actions, cicd, workflows, automatisation, deploiement]
+---
+
+## Structure d'un workflow
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+      - run: npm test
+```
+
+---
+
+## Triggers (on)
+
+```yaml
+on:
+  push:
+    branches: [main, develop]
+    paths: ['src/**', 'package.json']
+
+  pull_request:
+    types: [opened, synchronize]
+
+  schedule:
+    - cron: '0 6 * * 1'  # Chaque lundi a 6h UTC
+
+  workflow_dispatch:      # Declenchement manuel
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+```
+
+---
+
+## Jobs et dependances
+
+```yaml
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: [lint, test]   # Attend lint ET test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - run: echo "Deploying..."
+```
+
+---
+
+## Matrix strategy
+
+```yaml
+jobs:
+  test:
+    strategy:
+      matrix:
+        node-version: [20, 22]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci && npm test
+```
+
+---
+
+## Cache
+
+```yaml
+- uses: actions/cache@v4
+  with:
+    path: ~/.pnpm-store
+    key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+    restore-keys: pnpm-
+```
+
+---
+
+## Secrets et variables
+
+```yaml
+steps:
+  - name: Deploy
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      DEPLOY_URL: ${{ vars.DEPLOY_URL }}
+    run: |
+      curl -X POST "$DEPLOY_URL" \
+        -H "Authorization: Bearer $API_KEY"
+```
+
+---
+
+## Artefacts
+
+```yaml
+# Upload
+- uses: actions/upload-artifact@v4
+  with:
+    name: build-output
+    path: dist/
+    retention-days: 7
+
+# Download (dans un autre job)
+- uses: actions/download-artifact@v4
+  with:
+    name: build-output
+    path: dist/
+```
+
+---
+
+## GitHub Pages deployment
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+---
+
+## Docker build et push
+
+```yaml
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
+---
+
+## Expressions utiles
+
+```yaml
+# Conditions
+if: github.event_name == 'push'
+if: contains(github.event.head_commit.message, '[skip ci]') == false
+if: github.ref == 'refs/heads/main'
+if: always()    # Execute meme si un step precedent a echoue
+if: failure()   # Execute uniquement si un step precedent a echoue
+
+# Fonctions
+${{ hashFiles('**/pnpm-lock.yaml') }}
+${{ github.sha }}
+${{ github.ref_name }}
+${{ runner.os }}
+```
+
+---
+
+## Bonnes pratiques
+
+- **Pinning des actions** : utiliser `@v4` ou un SHA complet, pas `@main`
+- **Minimal permissions** : `permissions: contents: read` par defaut
+- **Secrets** : jamais en dur, toujours via `${{ secrets.* }}`
+- **Concurrency** : eviter les deploiements paralleles
+- **Timeouts** : definir `timeout-minutes` pour eviter les jobs bloques
+
+```yaml
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+```

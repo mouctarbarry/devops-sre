@@ -1,0 +1,147 @@
+---
+title: AWS
+category: cloud
+description: Cheatsheet AWS — services essentiels, CLI et architecture cloud
+tags: [aws, cloud, ec2, s3, iam, vpc, rds, lambda]
+---
+
+## AWS CLI — configuration
+
+<TerminalBlock command="aws configure" output="AWS Access Key ID: ********
+AWS Secret Access Key: ********
+Default region name: eu-west-3
+Default output format: json" />
+
+<TerminalBlock command="aws sts get-caller-identity" output="Verifier l'identite IAM active" />
+
+---
+
+## IAM
+
+<TerminalBlock command="aws iam list-users" />
+
+<TerminalBlock command="aws iam create-user --user-name deploy-bot" />
+
+<TerminalBlock command="aws iam attach-user-policy --user-name deploy-bot --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess" />
+
+### Principe du moindre privilege
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::mon-bucket/*"
+    }
+  ]
+}
+```
+
+---
+
+## EC2
+
+<TerminalBlock command="aws ec2 describe-instances --filters 'Name=tag:Environment,Values=production'" />
+
+<TerminalBlock command="aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --instance-type t3.micro --key-name ma-cle --count 1" />
+
+<TerminalBlock command="aws ec2 stop-instances --instance-ids i-1234567890abcdef0" />
+
+<TerminalBlock command="aws ec2 terminate-instances --instance-ids i-1234567890abcdef0" />
+
+### Types d'instances courants
+
+| Type | vCPU | RAM | Usage |
+|------|------|-----|-------|
+| t3.micro | 2 | 1 GB | Dev, tests |
+| t3.medium | 2 | 4 GB | Apps legeres |
+| m6i.large | 2 | 8 GB | General purpose |
+| c6i.large | 2 | 4 GB | CPU-intensive |
+| r6i.large | 2 | 16 GB | Memory-intensive |
+
+---
+
+## S3
+
+<TerminalBlock command="aws s3 ls" output="Lister tous les buckets" />
+
+<TerminalBlock command="aws s3 mb s3://mon-bucket-unique" output="Creer un bucket" />
+
+<TerminalBlock command="aws s3 cp fichier.txt s3://mon-bucket/" />
+
+<TerminalBlock command="aws s3 sync ./dist s3://mon-bucket/ --delete" output="Synchroniser un dossier local avec S3" />
+
+<TerminalBlock command="aws s3 presign s3://mon-bucket/fichier.pdf --expires-in 3600" output="Generer un lien temporaire (1h)" />
+
+---
+
+## VPC
+
+### Architecture typique
+
+```
+VPC (10.0.0.0/16)
+├── Public Subnet A  (10.0.1.0/24)  → NAT Gateway, ALB
+├── Public Subnet B  (10.0.2.0/24)  → NAT Gateway, ALB
+├── Private Subnet A (10.0.10.0/24) → EC2, ECS, EKS
+├── Private Subnet B (10.0.11.0/24) → EC2, ECS, EKS
+├── Data Subnet A    (10.0.20.0/24) → RDS, ElastiCache
+└── Data Subnet B    (10.0.21.0/24) → RDS, ElastiCache
+```
+
+### Security Groups vs NACLs
+
+| | Security Group | NACL |
+|---|---------------|------|
+| Niveau | Instance | Subnet |
+| Etat | Stateful | Stateless |
+| Regles | Allow only | Allow + Deny |
+| Evaluation | Toutes les regles | Ordre numerique |
+
+---
+
+## RDS
+
+<TerminalBlock command="aws rds describe-db-instances" />
+
+<TerminalBlock command="aws rds create-db-snapshot --db-instance-identifier ma-db --db-snapshot-identifier backup-2024-01" />
+
+### Bonnes pratiques RDS
+
+- Multi-AZ pour la haute disponibilite
+- Read replicas pour les lectures intensives
+- Sauvegardes automatiques activees
+- Chiffrement au repos et en transit
+- Pas d'acces public (subnet prive)
+
+---
+
+## Lambda
+
+<TerminalBlock command="aws lambda list-functions" />
+
+<TerminalBlock command={`aws lambda invoke --function-name ma-fonction --payload '{"key": "value"}' output.json`} />
+
+---
+
+## Services essentiels
+
+| Service | Description |
+|---------|-------------|
+| **EC2** | Serveurs virtuels |
+| **S3** | Stockage objets |
+| **RDS** | Bases de donnees relationnelles |
+| **EKS** | Kubernetes manage |
+| **ECS** | Conteneurs manages (Fargate) |
+| **Lambda** | Serverless functions |
+| **CloudFront** | CDN |
+| **Route 53** | DNS |
+| **IAM** | Gestion des identites |
+| **VPC** | Reseau virtuel prive |
+| **CloudWatch** | Monitoring et logs |
+| **SNS/SQS** | Messaging et queues |

@@ -1,0 +1,212 @@
+---
+title: Shell & Bash
+category: scripting
+description: Cheatsheet Shell/Bash — scripting, variables, boucles, conditions et commandes utiles
+tags: [shell, bash, scripting, linux, automation]
+---
+
+## Bases du scripting
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+```
+
+| Flag | Effet |
+|------|-------|
+| `set -e` | Arreter si une commande echoue |
+| `set -u` | Erreur si une variable est non definie |
+| `set -o pipefail` | Un pipe echoue si n'importe quelle commande echoue |
+
+---
+
+## Variables
+
+```bash
+# Declaration
+NAME="Mouctar"
+readonly VERSION="1.0.0"
+
+# Utilisation
+echo "Hello $NAME"
+echo "Version: ${VERSION}"
+
+# Variables d'environnement
+export DATABASE_URL="postgres://localhost:5432/mydb"
+
+# Substitution par defaut
+echo "${PORT:-3000}"       # 3000 si PORT est vide ou non defini
+echo "${PORT:=3000}"       # Assigne 3000 si non defini
+```
+
+---
+
+## Conditions
+
+```bash
+# Test de chaine
+if [[ "$ENV" == "production" ]]; then
+  echo "Production mode"
+elif [[ "$ENV" == "staging" ]]; then
+  echo "Staging mode"
+else
+  echo "Development mode"
+fi
+
+# Test de fichier
+[[ -f "config.yml" ]]    # Le fichier existe
+[[ -d "/var/log" ]]      # Le repertoire existe
+[[ -x "script.sh" ]]     # Le fichier est executable
+[[ -z "$VAR" ]]          # La variable est vide
+[[ -n "$VAR" ]]          # La variable n'est pas vide
+
+# Tests numeriques
+[[ "$COUNT" -gt 10 ]]    # Greater than
+[[ "$COUNT" -le 5 ]]     # Less than or equal
+[[ "$COUNT" -eq 0 ]]     # Equal
+```
+
+---
+
+## Boucles
+
+```bash
+# For
+for file in *.log; do
+  echo "Processing $file"
+done
+
+# For avec sequence
+for i in {1..10}; do
+  echo "Iteration $i"
+done
+
+# While
+while read -r line; do
+  echo "Line: $line"
+done < input.txt
+
+# Until
+until kubectl get pods | grep -q "Running"; do
+  echo "Waiting for pod..."
+  sleep 5
+done
+```
+
+---
+
+## Fonctions
+
+```bash
+deploy() {
+  local env="${1:?Usage: deploy <environment>}"
+  local version="${2:-latest}"
+
+  echo "Deploying version $version to $env"
+  # ...
+}
+
+deploy "production" "v2.1.0"
+```
+
+---
+
+## Pipes et redirections
+
+<TerminalBlock command="cat access.log | grep 'ERROR' | sort | uniq -c | sort -rn | head -10" output="Top 10 des erreurs les plus frequentes" />
+
+```bash
+# Redirections
+command > output.txt      # Stdout vers fichier (ecrase)
+command >> output.txt     # Stdout vers fichier (ajoute)
+command 2> error.txt      # Stderr vers fichier
+command &> all.txt        # Stdout + stderr vers fichier
+command 2>&1              # Stderr vers stdout
+```
+
+---
+
+## Manipulation de texte
+
+<TerminalBlock command="grep -r 'TODO' src/ --include='*.ts'" output="Chercher TODO dans les fichiers TypeScript" />
+
+<TerminalBlock command="sed -i 's/old/new/g' fichier.txt" output="Remplacer 'old' par 'new' dans un fichier" />
+
+<TerminalBlock command="awk '{print $1, $NF}' access.log" output="Afficher le premier et dernier champ" />
+
+<TerminalBlock command="cut -d',' -f1,3 data.csv" output="Extraire les colonnes 1 et 3 d'un CSV" />
+
+<TerminalBlock command="sort fichier.txt | uniq -c | sort -rn" output="Compter les occurrences et trier" />
+
+---
+
+## Process management
+
+<TerminalBlock command="ps aux | grep nginx" />
+
+<TerminalBlock command="kill -15 1234" output="SIGTERM — arret propre" />
+
+<TerminalBlock command="kill -9 1234" output="SIGKILL — arret force (dernier recours)" />
+
+<TerminalBlock command="nohup ./script.sh &" output="Executer en arriere-plan, survit a la deconnexion" />
+
+<TerminalBlock command="jobs -l" output="Lister les jobs en arriere-plan" />
+
+---
+
+## Commandes utiles
+
+<TerminalBlock command="xargs -I{} -P4 curl -s {} < urls.txt" output="Requetes paralleles (4 a la fois)" />
+
+<TerminalBlock command="watch -n 5 'kubectl get pods'" output="Executer une commande toutes les 5 secondes" />
+
+<TerminalBlock command="timeout 30 ./long-script.sh" output="Limiter l'execution a 30 secondes" />
+
+<TerminalBlock command="date -u +%Y-%m-%dT%H:%M:%SZ" output="Date au format ISO 8601 UTC" />
+
+<TerminalBlock command="du -sh */ | sort -rh | head -10" output="Top 10 des repertoires les plus volumineux" />
+
+---
+
+## Script template
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
+
+usage() {
+  cat <<EOF
+Usage: $SCRIPT_NAME [options] <argument>
+
+Options:
+  -e, --env ENV    Target environment (default: staging)
+  -v, --verbose    Enable verbose output
+  -h, --help       Show this help message
+EOF
+}
+
+main() {
+  local env="staging"
+  local verbose=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -e|--env)     env="$2"; shift 2 ;;
+      -v|--verbose) verbose=true; shift ;;
+      -h|--help)    usage; exit 0 ;;
+      *)            echo "Unknown option: $1"; usage; exit 1 ;;
+    esac
+  done
+
+  if [[ "$verbose" == true ]]; then
+    set -x
+  fi
+
+  echo "Deploying to $env..."
+}
+
+main "$@"
+```

@@ -1,0 +1,187 @@
+---
+title: Prometheus
+category: monitoring
+description: Cheatsheet Prometheus — PromQL, alerting, instrumentation et bonnes pratiques
+tags: [prometheus, monitoring, promql, alerting, metriques]
+---
+
+## Architecture
+
+```
+                     ┌─────────────┐
+                     │  Alertmanager│
+                     └──────▲──────┘
+                            │ alerts
+┌──────────┐  scrape  ┌─────┴──────┐  query  ┌──────────┐
+│  Targets  │────────→│ Prometheus  │←────────│  Grafana  │
+│  (apps)   │         │   Server    │         │           │
+└──────────┘         └─────────────┘         └──────────┘
+```
+
+---
+
+## Types de metriques
+
+| Type | Description | Exemple |
+|------|-------------|---------|
+| **Counter** | Valeur qui ne fait que monter | `http_requests_total` |
+| **Gauge** | Valeur qui monte et descend | `temperature_celsius` |
+| **Histogram** | Distribution des valeurs (buckets) | `http_request_duration_seconds` |
+| **Summary** | Distribution avec quantiles precalcules | `rpc_duration_seconds` |
+
+---
+
+## PromQL — requetes essentielles
+
+### Selectors
+
+```promql
+# Selector simple
+http_requests_total
+
+# Avec labels
+http_requests_total{method="GET", status="200"}
+
+# Regex
+http_requests_total{path=~"/api/.*"}
+
+# Negation
+http_requests_total{status!="200"}
+```
+
+### Rate et augmentation
+
+```promql
+# Taux par seconde sur 5 minutes (pour counters)
+rate(http_requests_total[5m])
+
+# Augmentation absolue sur 1 heure
+increase(http_requests_total[1h])
+
+# Taux instantane
+irate(http_requests_total[5m])
+```
+
+### Agregation
+
+```promql
+# Somme par methode HTTP
+sum by (method) (rate(http_requests_total[5m]))
+
+# Moyenne par instance
+avg by (instance) (node_cpu_seconds_total)
+
+# Top 5 des endpoints les plus lents
+topk(5, histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])))
+
+# Nombre d'instances up
+count(up == 1)
+```
+
+### Histogrammes et percentiles
+
+```promql
+# P99 latence
+histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+# P95 latence par endpoint
+histogram_quantile(0.95,
+  sum by (le, handler) (
+    rate(http_request_duration_seconds_bucket[5m])
+  )
+)
+
+# Latence moyenne
+rate(http_request_duration_seconds_sum[5m])
+  /
+rate(http_request_duration_seconds_count[5m])
+```
+
+---
+
+## RED Method — metriques pour les services
+
+| Metrique | PromQL |
+|----------|--------|
+| **R**ate | `sum(rate(http_requests_total[5m]))` |
+| **E**rrors | `sum(rate(http_requests_total{status=~"5.."}[5m]))` |
+| **D**uration | `histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))` |
+
+## USE Method — metriques pour les ressources
+
+| Metrique | Exemple |
+|----------|---------|
+| **U**tilization | CPU usage %, Memory usage % |
+| **S**aturation | Queue depth, thread pool |
+| **E**rrors | Disk errors, network errors |
+
+---
+
+## Alerting rules
+
+```yaml
+groups:
+  - name: application
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+            /
+          sum(rate(http_requests_total[5m]))
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taux d'erreur > 5%"
+          description: "{{ $value | humanizePercentage }} des requetes echouent"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latence P99 > 1s"
+```
+
+---
+
+## Configuration
+
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'api'
+    static_configs:
+      - targets: ['api:3000']
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+rule_files:
+  - 'alerts/*.yml'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+```
+
+---
+
+## Bonnes pratiques
+
+- **Nommage** : `<namespace>_<name>_<unit>` (ex: `http_request_duration_seconds`)
+- **Labels** : utiles pour le filtrage, mais pas trop (cardinalite)
+- **Rate sur counters** : toujours utiliser `rate()` ou `increase()`
+- **Recording rules** : precalculer les requetes couteuses
+- **Retention** : 15-30 jours en local, long-term avec Thanos ou Mimir

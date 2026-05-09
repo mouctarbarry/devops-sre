@@ -1,0 +1,137 @@
+---
+title: Principes SRE
+category: concepts
+description: Site Reliability Engineering — les principes de Google pour operer des systemes fiables a grande echelle
+tags: [sre, fiabilite, sli, slo, error-budget, toil]
+---
+
+## SRE en bref
+
+Le Site Reliability Engineering (SRE) est l'approche de Google pour les operations. La devise :
+
+> *"SRE is what happens when you ask a software engineer to design an operations function."*
+> — Ben Treynor Sloss
+
+---
+
+## SLI, SLO, SLA
+
+### SLI (Service Level Indicator)
+
+Metrique quantitative de la qualite du service.
+
+| Type | Exemple | Mesure |
+|------|---------|--------|
+| Disponibilite | % de requetes reussies | `(requetes 2xx) / (total requetes)` |
+| Latence | Temps de reponse p99 | `p99 < 200ms` |
+| Throughput | Requetes par seconde | `> 1000 req/s` |
+| Error rate | % d'erreurs | `< 0.1% erreurs 5xx` |
+
+### SLO (Service Level Objective)
+
+Cible interne pour un SLI. Exemple : *99.9% de disponibilite sur 30 jours glissants*.
+
+<TerminalBlock
+  command="# Calcul du budget d'erreur pour 99.9% SLO sur 30 jours"
+  output="Budget = 30 jours × 24h × 60min × (1 - 0.999) = 43.2 minutes de downtime autorise"
+/>
+
+### SLA (Service Level Agreement)
+
+Contrat avec les clients. Toujours moins ambitieux que le SLO (marge de securite).
+
+```
+SLA ≤ SLO ≤ realite mesuree
+Exemple : SLA 99.5% < SLO 99.9% < mesure reelle 99.95%
+```
+
+---
+
+## Error Budget
+
+L'error budget est la difference entre 100% et votre SLO. C'est la quantite de fiabilite que vous pouvez "depenser" pour aller plus vite.
+
+| SLO | Error Budget (30 jours) |
+|-----|------------------------|
+| 99% | 7h 12min |
+| 99.5% | 3h 36min |
+| 99.9% | 43min 12s |
+| 99.95% | 21min 36s |
+| 99.99% | 4min 19s |
+
+**Politique d'error budget :**
+- Budget restant > 50% → deploiements normaux, experimentation autorisee
+- Budget restant 10-50% → deploiements prudents, revues supplementaires
+- Budget epuise → gel des deploiements, focus fiabilite
+
+---
+
+## Toil — le travail a eliminer
+
+Le toil est le travail operationnel manuel, repetitif, automatisable et sans valeur durable.
+
+### Caracteristiques du toil
+
+- **Manuel** : un humain doit intervenir
+- **Repetitif** : meme tache encore et encore
+- **Automatisable** : un script pourrait le faire
+- **Reactif** : declenche par un evenement, pas proactif
+- **Sans valeur durable** : pas d'amelioration permanente du service
+
+### Regle des 50%
+
+Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est consacre a l'ingenierie : automatisation, amelioration des outils, projets de fiabilite.
+
+---
+
+## Incident Management
+
+### Severites
+
+| Niveau | Impact | Response |
+|--------|--------|----------|
+| **SEV-1** | Service completement down | Page immediate, war room |
+| **SEV-2** | Degradation significative | Page, investigation prioritaire |
+| **SEV-3** | Impact mineur | Notification, traitement heures ouvrables |
+| **SEV-4** | Cosmetic, non urgent | Ticket, backlog |
+
+### Roles en incident
+
+- **Incident Commander (IC)** : coordonne la reponse
+- **Communication Lead** : informe les stakeholders
+- **Operations Lead** : execute les actions techniques
+- **Subject Matter Experts** : expertise specifique au probleme
+
+### Post-mortem blameless
+
+1. **Timeline** : chronologie des evenements
+2. **Impact** : metriques affectees, duree, utilisateurs touches
+3. **Root cause** : analyse des causes profondes (5 Whys)
+4. **Action items** : correctifs concrets avec owners et deadlines
+5. **Lessons learned** : ce qu'on a appris
+
+---
+
+## On-call
+
+### Bonnes pratiques
+
+- Rotations de 1-2 semaines maximum
+- Pas plus de 2 incidents par shift de 12h (objectif)
+- Playbooks documentes pour les alertes communes
+- Handoff structure entre shifts
+- Compensation adequate (temps libre, prime)
+
+### Pyramide d'alerting
+
+```
+        ▲ PAGE (reveille quelqu'un)
+       / \    → symptomes utilisateur, SLO en danger
+      /   \
+     / TICKET \  → degradation non urgente
+    /         \
+   / DASHBOARD \ → metriques de surveillance
+  /             \
+ /    LOGS       \ → debug, investigation
+/                 \
+```

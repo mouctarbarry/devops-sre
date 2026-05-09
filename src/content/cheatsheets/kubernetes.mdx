@@ -1,0 +1,183 @@
+---
+title: Kubernetes
+category: conteneurisation
+description: Cheatsheet Kubernetes — kubectl, pods, deployments, services et configuration
+tags: [kubernetes, k8s, kubectl, pods, deployments, services]
+---
+
+## kubectl — commandes essentielles
+
+### Informations du cluster
+
+<TerminalBlock command="kubectl cluster-info" />
+
+<TerminalBlock command="kubectl get nodes -o wide" output="NAME          STATUS   ROLES           AGE   VERSION   INTERNAL-IP
+control-01    Ready    control-plane   30d   v1.31.0   10.0.0.10
+worker-01     Ready    <none>          30d   v1.31.0   10.0.0.11
+worker-02     Ready    <none>          30d   v1.31.0   10.0.0.12" />
+
+<TerminalBlock command="kubectl api-resources" output="Liste toutes les ressources API disponibles" />
+
+---
+
+## Pods
+
+<TerminalBlock command="kubectl get pods -n default" />
+
+<TerminalBlock command="kubectl get pods -A" output="Tous les pods dans tous les namespaces" />
+
+<TerminalBlock command="kubectl describe pod mon-pod" />
+
+<TerminalBlock command="kubectl logs mon-pod -f --tail=100" output="Suivre les 100 dernieres lignes de logs" />
+
+<TerminalBlock command="kubectl logs mon-pod -c sidecar" output="Logs d'un conteneur specifique dans un pod multi-conteneur" />
+
+<TerminalBlock command="kubectl exec -it mon-pod -- /bin/sh" />
+
+<TerminalBlock command="kubectl port-forward pod/mon-pod 8080:80" output="Acceder au pod localement sur localhost:8080" />
+
+<TerminalBlock command="kubectl delete pod mon-pod" />
+
+---
+
+## Deployments
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: mon-api:1.0
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+```
+
+<TerminalBlock command="kubectl apply -f deployment.yaml" />
+
+<TerminalBlock command="kubectl get deployments" />
+
+<TerminalBlock command="kubectl rollout status deployment/api" />
+
+<TerminalBlock command="kubectl rollout history deployment/api" />
+
+<TerminalBlock command="kubectl rollout undo deployment/api" output="Rollback a la version precedente" />
+
+<TerminalBlock command="kubectl scale deployment/api --replicas=5" />
+
+<TerminalBlock command="kubectl set image deployment/api api=mon-api:2.0" output="Mise a jour de l'image (rolling update)" />
+
+---
+
+## Services
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-svc
+spec:
+  selector:
+    app: api
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP
+```
+
+| Type | Usage |
+|------|-------|
+| **ClusterIP** | Interne au cluster (defaut) |
+| **NodePort** | Expose sur un port de chaque node (30000-32767) |
+| **LoadBalancer** | Cree un LB cloud externe |
+| **ExternalName** | Alias DNS vers un service externe |
+
+<TerminalBlock command="kubectl get svc" />
+
+<TerminalBlock command="kubectl expose deployment api --port=80 --target-port=3000 --type=ClusterIP" />
+
+---
+
+## ConfigMaps & Secrets
+
+<TerminalBlock command="kubectl create configmap app-config --from-literal=ENV=production --from-literal=LOG_LEVEL=info" />
+
+<TerminalBlock command="kubectl create secret generic db-creds --from-literal=password=S3cur3P4ss" />
+
+```yaml
+# Utilisation dans un pod
+spec:
+  containers:
+    - name: app
+      envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-creds
+```
+
+---
+
+## Namespaces
+
+<TerminalBlock command="kubectl create namespace staging" />
+
+<TerminalBlock command="kubectl get all -n staging" />
+
+<TerminalBlock command="kubectl config set-context --current --namespace=staging" output="Changer le namespace par defaut" />
+
+---
+
+## Debugging
+
+<TerminalBlock command="kubectl get events --sort-by=.metadata.creationTimestamp" />
+
+<TerminalBlock command="kubectl top pods" output="CPU et memoire des pods (metrics-server requis)" />
+
+<TerminalBlock command="kubectl top nodes" />
+
+<TerminalBlock command="kubectl run debug --image=busybox -it --rm -- sh" output="Pod ephemere pour debugger le reseau" />
+
+<TerminalBlock command="kubectl get pods -o jsonpath='{.items[*].status.phase}'" output="Extraire des champs specifiques avec JSONPath" />
+
+---
+
+## Contextes & Clusters
+
+<TerminalBlock command="kubectl config get-contexts" />
+
+<TerminalBlock command="kubectl config use-context production" />
+
+<TerminalBlock command="kubectl config current-context" />

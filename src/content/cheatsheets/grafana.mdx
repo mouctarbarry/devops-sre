@@ -1,0 +1,205 @@
+---
+title: Grafana
+category: monitoring
+description: Cheatsheet Grafana — dashboards, panels, alerting et data sources
+tags: [grafana, dashboards, visualisation, monitoring, alerting]
+---
+
+## Architecture
+
+Grafana est la couche de visualisation. Il se connecte a des data sources pour afficher des dashboards.
+
+```
+┌────────────┐     ┌────────────┐     ┌────────────┐
+│ Prometheus  │     │   Loki      │     │ PostgreSQL  │
+└──────┬─────┘     └──────┬─────┘     └──────┬─────┘
+       │                  │                  │
+       └──────────────────┴──────────────────┘
+                          │
+                   ┌──────┴──────┐
+                   │   Grafana    │
+                   │  Dashboards  │
+                   └─────────────┘
+```
+
+---
+
+## Data sources courantes
+
+| Data Source | Usage |
+|------------|-------|
+| **Prometheus** | Metriques time-series |
+| **Loki** | Logs agreres |
+| **Elasticsearch** | Logs et search |
+| **PostgreSQL** | Donnees relationnelles |
+| **CloudWatch** | Metriques AWS |
+| **InfluxDB** | Time-series IoT |
+
+---
+
+## Panels essentiels
+
+### Time series
+
+Le panel le plus utilise. Affiche des metriques au fil du temps.
+
+```promql
+# Requetes par seconde
+sum(rate(http_requests_total[5m])) by (handler)
+```
+
+### Stat
+
+Affiche une valeur unique avec un trend.
+
+```promql
+# Uptime
+avg(up{job="api"}) * 100
+```
+
+### Gauge
+
+Affiche une valeur avec des seuils colores.
+
+```promql
+# Utilisation CPU
+100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+```
+
+### Table
+
+Donnees tabulaires, utile pour les tops et inventaires.
+
+```promql
+# Top endpoints par latence P99
+topk(10,
+  histogram_quantile(0.99,
+    sum by (handler, le) (rate(http_request_duration_seconds_bucket[5m]))
+  )
+)
+```
+
+### Heatmap
+
+Distribution de latence dans le temps.
+
+```promql
+sum by (le) (rate(http_request_duration_seconds_bucket[5m]))
+```
+
+### Logs panel
+
+Affiche les logs depuis Loki ou Elasticsearch.
+
+```logql
+{app="api"} |= "error" | json | level="error"
+```
+
+---
+
+## Variables de dashboard
+
+Les variables rendent les dashboards dynamiques et reutilisables.
+
+```
+# Variable "instance" depuis Prometheus
+label_values(up{job="api"}, instance)
+
+# Variable "environment"
+label_values(up, environment)
+
+# Utilisation dans une requete
+rate(http_requests_total{instance="$instance"}[5m])
+```
+
+---
+
+## Alerting Grafana
+
+```yaml
+# Alert rule dans Grafana
+Condition: WHEN avg() OF query(A, 5m, now) IS ABOVE 0.95
+For: 10m
+Labels:
+  severity: critical
+  team: platform
+Annotations:
+  summary: "CPU usage above 95% for {{ $labels.instance }}"
+```
+
+### Notification channels
+
+| Channel | Usage |
+|---------|-------|
+| **Slack** | Notifications equipe |
+| **PagerDuty** | Astreinte, incidents critiques |
+| **Email** | Rapports, notifications non urgentes |
+| **Webhook** | Integration custom |
+| **OpsGenie** | Gestion d'incidents |
+
+---
+
+## Dashboard as Code
+
+Grafana supporte le provisioning de dashboards via JSON.
+
+```json
+{
+  "dashboard": {
+    "title": "API Overview",
+    "panels": [
+      {
+        "title": "Request Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total[5m])) by (status)"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Provisioning automatique
+
+```yaml
+# provisioning/dashboards/dashboards.yml
+apiVersion: 1
+providers:
+  - name: default
+    folder: ''
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
+```
+
+---
+
+## Dashboards recommandes
+
+### SRE Golden Signals
+
+1. **Latence** : P50, P95, P99 des temps de reponse
+2. **Trafic** : Requetes par seconde
+3. **Erreurs** : Taux d'erreur 4xx et 5xx
+4. **Saturation** : CPU, memoire, connections DB
+
+### Infrastructure
+
+- **Node Exporter** : CPU, memoire, disque, reseau par node
+- **Container metrics** : CPU/memoire par pod (cAdvisor)
+- **Kubernetes** : pods, deployments, nodes, events
+
+---
+
+## Bonnes pratiques
+
+- **Un dashboard par service** : pas de mega-dashboard
+- **Variables** : rendre les dashboards parametrables
+- **Annotations** : marquer les deploiements et incidents
+- **Seuils** : vert/jaune/rouge pour chaque metrique
+- **Dashboard as Code** : versionner les dashboards en Git
+- **Folders** : organiser par equipe ou domaine

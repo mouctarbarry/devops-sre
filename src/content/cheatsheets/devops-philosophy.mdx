@@ -1,0 +1,83 @@
+---
+title: Philosophie DevOps
+category: concepts
+description: Les principes fondamentaux du mouvement DevOps et la culture de collaboration
+tags: [devops, culture, collaboration, automatisation]
+---
+
+## Les 3 voies du DevOps
+
+Le DevOps repose sur trois principes fondamentaux decrits par Gene Kim dans *The Phoenix Project* :
+
+### 1. Flow (accelerer le flux)
+
+Optimiser le flux de travail de gauche a droite — du developpement a la production.
+
+- **Reduire la taille des lots** : petits changements, deployes frequemment
+- **Limiter le travail en cours** (WIP) : eviter le multitache excessif
+- **Eliminer les goulots d'etranglement** : automatiser les processus manuels
+- **Rendre le travail visible** : tableaux Kanban, metriques de flux
+
+### 2. Feedback (amplifier les boucles de retour)
+
+Creer des boucles de feedback rapides de droite a gauche.
+
+- **Monitoring en production** : detecter les problemes avant les utilisateurs
+- **Tests automatises** : feedback immediat sur la qualite du code
+- **Alerting intelligent** : notifier les bonnes personnes au bon moment
+- **Post-mortems blameless** : apprendre des incidents sans pointer du doigt
+
+### 3. Apprentissage continu
+
+Cultiver une culture d'experimentation et d'amelioration.
+
+- **Experimentation** : tester des hypotheses avec des feature flags
+- **Prise de risque calculee** : echouer vite, apprendre vite
+- **Partage de connaissances** : documentation, pair programming, tech talks
+- **Amelioration continue** : retrospectives regulieres, kaizen
+
+---
+
+## CALMS — Les piliers DevOps
+
+| Pilier | Description |
+|--------|-------------|
+| **C**ulture | Collaboration entre Dev et Ops, responsabilite partagee |
+| **A**utomatisation | CI/CD, IaC, tests automatises, monitoring |
+| **L**ean | Eliminer le gaspillage, flux continu, small batches |
+| **M**esure | Metriques DORA, SLI/SLO, lead time, MTTR |
+| **S**haring | Partage de connaissances, transparence, blameless culture |
+
+---
+
+## Metriques DORA
+
+Les 4 metriques cles pour mesurer la performance DevOps :
+
+| Metrique | Elite | High | Medium | Low |
+|----------|-------|------|--------|-----|
+| **Deployment Frequency** | A la demande | 1/jour - 1/semaine | 1/semaine - 1/mois | 1/mois - 6/mois |
+| **Lead Time for Changes** | < 1 heure | 1 jour - 1 semaine | 1 semaine - 1 mois | 1 - 6 mois |
+| **Change Failure Rate** | 0-15% | 16-30% | 16-30% | 46-60% |
+| **MTTR** | < 1 heure | < 1 jour | < 1 jour | 1 semaine - 1 mois |
+
+---
+
+## Anti-patterns a eviter
+
+- **Silos** : equipes Dev et Ops isolees, blame culture
+- **Snowflake servers** : serveurs configures manuellement, non reproductibles
+- **Change Advisory Board** comme goulot : approbations manuelles pour chaque deploiement
+- **Heroics** : dependance a des individus pour resoudre les incidents
+- **Deploiements Big Bang** : tout deployer en une fois au lieu de livraisons incrementales
+
+---
+
+## You build it, you run it
+
+Le principe fondamental d'Amazon : l'equipe qui construit un service est aussi responsable de son fonctionnement en production. Cela encourage :
+
+- La qualite du code (vous serez reveille si ca casse)
+- L'empathie pour les operations
+- Des boucles de feedback directes
+- L'ownership bout en bout

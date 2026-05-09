@@ -1,0 +1,205 @@
+---
+title: Ansible
+category: iac
+description: Cheatsheet Ansible — inventaire, playbooks, roles, modules et bonnes pratiques
+tags: [ansible, automatisation, configuration, playbooks, roles]
+---
+
+## Concepts cles
+
+| Concept | Description |
+|---------|-------------|
+| **Inventaire** | Liste des machines cibles (hosts) |
+| **Playbook** | Fichier YAML decrivant les taches a executer |
+| **Role** | Collection reutilisable de taches, handlers, variables |
+| **Module** | Unite d'action (apt, copy, service, template...) |
+| **Task** | Appel d'un module avec des parametres |
+| **Handler** | Tache declenchee par un `notify` (ex: redemarrer nginx) |
+| **Facts** | Informations collectees sur les machines cibles |
+
+---
+
+## Inventaire
+
+```ini
+# inventory.ini
+[web]
+web-01 ansible_host=10.0.1.10
+web-02 ansible_host=10.0.1.11
+
+[db]
+db-01 ansible_host=10.0.2.10
+
+[production:children]
+web
+db
+
+[all:vars]
+ansible_user=deploy
+ansible_ssh_private_key_file=~/.ssh/deploy_key
+```
+
+---
+
+## Commandes ad-hoc
+
+<TerminalBlock command="ansible all -i inventory.ini -m ping" output="Tester la connectivite de tous les hosts" />
+
+<TerminalBlock command="ansible web -m shell -a 'uptime'" output="Executer une commande sur le groupe web" />
+
+<TerminalBlock command="ansible db -m apt -a 'name=postgresql state=present' --become" output="Installer PostgreSQL sur les serveurs DB" />
+
+<TerminalBlock command="ansible all -m setup" output="Collecter les facts de toutes les machines" />
+
+---
+
+## Playbook
+
+```yaml
+# deploy.yml
+---
+- name: Deploy web application
+  hosts: web
+  become: true
+  vars:
+    app_version: "2.1.0"
+    app_port: 3000
+
+  tasks:
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+        update_cache: true
+
+    - name: Create app directory
+      file:
+        path: /opt/app
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: "0755"
+
+    - name: Copy application files
+      copy:
+        src: ./dist/
+        dest: /opt/app/
+        owner: deploy
+      notify: Restart app
+
+    - name: Deploy systemd service
+      template:
+        src: templates/app.service.j2
+        dest: /etc/systemd/system/app.service
+      notify: Restart app
+
+    - name: Ensure app is running
+      systemd:
+        name: app
+        state: started
+        enabled: true
+        daemon_reload: true
+
+  handlers:
+    - name: Restart app
+      systemd:
+        name: app
+        state: restarted
+```
+
+<TerminalBlock command="ansible-playbook -i inventory.ini deploy.yml" />
+
+<TerminalBlock command="ansible-playbook deploy.yml --check" output="Dry run — affiche ce qui serait change sans l'appliquer" />
+
+<TerminalBlock command="ansible-playbook deploy.yml --diff" output="Affiche les differences dans les fichiers modifies" />
+
+<TerminalBlock command="ansible-playbook deploy.yml --limit web-01" output="Executer uniquement sur un host specifique" />
+
+<TerminalBlock command="ansible-playbook deploy.yml --tags deploy" output="Executer uniquement les taches avec le tag 'deploy'" />
+
+---
+
+## Roles
+
+```
+roles/
+└── nginx/
+    ├── tasks/
+    │   └── main.yml
+    ├── handlers/
+    │   └── main.yml
+    ├── templates/
+    │   └── nginx.conf.j2
+    ├── files/
+    ├── vars/
+    │   └── main.yml
+    └── defaults/
+        └── main.yml
+```
+
+```yaml
+# Utilisation dans un playbook
+- hosts: web
+  roles:
+    - nginx
+    - { role: app, app_version: "2.1.0" }
+```
+
+<TerminalBlock command="ansible-galaxy init mon-role" output="Creer la structure d'un role" />
+
+<TerminalBlock command="ansible-galaxy install geerlingguy.docker" output="Installer un role depuis Galaxy" />
+
+---
+
+## Templates Jinja2
+
+```jinja
+# templates/nginx.conf.j2
+server {
+    listen {{ app_port | default(80) }};
+    server_name {{ ansible_fqdn }};
+
+    location / {
+        proxy_pass http://127.0.0.1:{{ backend_port }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+{% if ssl_enabled %}
+    listen 443 ssl;
+    ssl_certificate {{ ssl_cert_path }};
+    ssl_certificate_key {{ ssl_key_path }};
+{% endif %}
+}
+```
+
+---
+
+## Modules courants
+
+| Module | Usage |
+|--------|-------|
+| `apt` / `yum` | Gestion des paquets |
+| `copy` | Copier des fichiers |
+| `template` | Deployer des templates Jinja2 |
+| `file` | Gerer fichiers et repertoires |
+| `service` / `systemd` | Gerer les services |
+| `user` / `group` | Gerer utilisateurs et groupes |
+| `git` | Cloner des repos |
+| `docker_container` | Gerer des conteneurs Docker |
+| `uri` | Requetes HTTP |
+| `wait_for` | Attendre qu'un port soit ouvert |
+
+---
+
+## Bonnes pratiques
+
+- **Idempotence** : relancer le playbook ne doit rien casser
+- **Handlers** : utiliser `notify` pour les redemarrages de services
+- **Vault** : chiffrer les secrets avec `ansible-vault`
+- **Tags** : taguer les taches pour des executions selectivement
+- **Check mode** : toujours tester avec `--check` avant d'appliquer
+
+<TerminalBlock command="ansible-vault encrypt vars/secrets.yml" output="Chiffrer un fichier de secrets" />
+
+<TerminalBlock command="ansible-playbook deploy.yml --ask-vault-pass" output="Executer avec un fichier vault" />
