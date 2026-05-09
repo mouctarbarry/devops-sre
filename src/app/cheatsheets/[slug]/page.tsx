@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getAllSlugs, getCheatsheetBySlug } from "@/lib/cheatsheets";
 import { CATEGORIES } from "@/lib/categories";
@@ -79,6 +80,7 @@ export default async function CheatsheetPage({ params }: PageProps) {
             components={mdxComponents}
             options={{
               mdxOptions: {
+                remarkPlugins: [remarkGfm],
                 rehypePlugins: [
                   [
                     rehypePrettyCode,

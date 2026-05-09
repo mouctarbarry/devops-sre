@@ -36,9 +36,9 @@
 
   .dark {
     --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    --foreground: 210 25% 90%;
     --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card-foreground: 210 25% 90%;
     --primary: 217 91% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
@@ -115,6 +115,11 @@
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
   }
+}
+
+/* ── Prose headings ───────────────────── */
+.dark .prose :is(h1, h2, h3, h4) {
+  color: hsl(210 20% 82%);
 }
 
 /* ── Tables ────────────────────────────── */
