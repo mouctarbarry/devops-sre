@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { searchCheatsheets } from "@/lib/search";
 import { CheatsheetCard } from "@/components/cheatsheet-card";
 import { CATEGORIES, type Category } from "@/lib/categories";
 import type { CheatsheetMeta } from "@/lib/cheatsheets";
+
+function getCategoryFromHash(): Category | null {
+  if (typeof window === "undefined") return null;
+  const hash = window.location.hash.slice(1);
+  return hash in CATEGORIES ? (hash as Category) : null;
+}
 
 export function CheatsheetExplorer({
   cheatsheets,
@@ -16,6 +22,16 @@ export function CheatsheetExplorer({
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<Category | null>(null);
   const debouncedQuery = useDebounce(query, 200);
+
+  const syncFromHash = useCallback(() => {
+    setActive(getCategoryFromHash());
+  }, []);
+
+  useEffect(() => {
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, [syncFromHash]);
 
   const results = useMemo(() => {
     let filtered = cheatsheets;
@@ -37,7 +53,10 @@ export function CheatsheetExplorer({
           <button
             key={key}
             type="button"
-            onClick={() => setActive(active === key ? null : key)}
+            onClick={() => {
+              const next = active === key ? null : key;
+              window.location.hash = next ?? "";
+            }}
             className={`rounded-xl border p-4 text-left transition-all hover:border-primary/30 hover:shadow-md ${
               active === key
                 ? "border-primary bg-primary/5 shadow-md"

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { CATEGORIES, type Category } from '@/lib/categories';
@@ -20,16 +20,32 @@ const NAV_ITEMS = [
 function NavLink({
   item,
   active,
+  pathname,
   onClick,
 }: {
   item: (typeof NAV_ITEMS)[number];
   active: boolean;
+  pathname: string;
   onClick?: () => void;
 }) {
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (item.key !== 'home') {
+      e.preventDefault();
+      if (pathname === '/') {
+        window.location.hash = item.key;
+      } else {
+        router.push(`/#${item.key}`);
+      }
+    }
+    onClick?.();
+  };
+
   return (
     <Link
       href={item.href}
-      {...(onClick ? { onClick } : {})}
+      onClick={handleClick}
       className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
         active
           ? 'bg-primary/10 text-primary'
@@ -82,8 +98,20 @@ export function Header() {
   );
 }
 
+function useHash() {
+  const [hash, setHash] = useState('');
+  useEffect(() => {
+    const update = () => setHash(window.location.hash.slice(1));
+    update();
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  return hash;
+}
+
 function MobileNavContent({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
+  const hash = useHash();
 
   return (
     <div className="space-y-1">
@@ -91,7 +119,8 @@ function MobileNavContent({ onClose }: { onClose: () => void }) {
         <NavLink
           key={item.key}
           item={item}
-          active={item.href === '/' ? pathname === '/' : false}
+          active={item.key === 'home' ? pathname === '/' && !hash : item.key === hash}
+          pathname={pathname}
           onClick={onClose}
         />
       ))}
@@ -101,6 +130,7 @@ function MobileNavContent({ onClose }: { onClose: () => void }) {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const hash = useHash();
 
   return (
     <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-60 shrink-0 overflow-y-auto border-r border-border p-4 lg:block">
@@ -109,7 +139,8 @@ export function Sidebar() {
           <NavLink
             key={item.key}
             item={item}
-            active={item.href === '/' ? pathname === '/' : false}
+            active={item.key === 'home' ? pathname === '/' && !hash : item.key === hash}
+            pathname={pathname}
           />
         ))}
       </nav>
