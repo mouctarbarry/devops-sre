@@ -67,7 +67,12 @@
   }
 
   html {
+    font-size: 16.5px;
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
   }
 
   body {
@@ -123,8 +128,12 @@
 }
 
 /* ── Tables ────────────────────────────── */
+.prose :where(table) {
+  @apply block overflow-x-auto;
+}
+
 .prose table {
-  @apply w-full overflow-hidden rounded-lg border border-border;
+  @apply w-full min-w-[500px] overflow-hidden rounded-lg border border-border;
   border-collapse: separate;
   border-spacing: 0;
 }

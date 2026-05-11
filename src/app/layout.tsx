@@ -1,11 +1,17 @@
 import type { Metadata } from 'next';
-import { Quicksand, Ubuntu_Mono } from 'next/font/google';
+import { Inter, Quicksand, Ubuntu_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
-const quicksand = Quicksand({
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+});
+
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  variable: '--font-heading',
   display: 'swap',
 });
 
@@ -27,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${quicksand.variable} ${ubuntuMono.variable}`}
+      className={`${inter.variable} ${quicksand.variable} ${ubuntuMono.variable}`}
     >
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

@@ -56,7 +56,7 @@ export default async function CheatsheetPage({ params }: PageProps) {
           <span className="mb-2 inline-block rounded-md bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
             {category.label}
           </span>
-          <h1 className="mb-2 font-mono text-4xl font-bold">
+          <h1 className="mb-2 font-heading text-4xl font-bold">
             {cheatsheet.title}
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -85,7 +85,7 @@ export default async function CheatsheetPage({ params }: PageProps) {
                   [
                     rehypePrettyCode,
                     {
-                      theme: "one-dark-pro",
+                      theme: { dark: "one-dark-pro", light: "github-light" },
                       keepBackground: true,
                     },
                   ],
