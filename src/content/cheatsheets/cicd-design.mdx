@@ -1,7 +1,7 @@
 ---
 title: Design CI/CD
 category: concepts
-description: Concevoir des pipelines CI/CD robustes — du commit a la production
+description: Concevoir des pipelines CI/CD robustes — du commit à la production
 tags: [cicd, pipeline, déploiement, integration-continue, livraison-continue]
 ---
 
@@ -10,7 +10,7 @@ tags: [cicd, pipeline, déploiement, integration-continue, livraison-continue]
 | Concept | Signification | Automatise |
 |---------|--------------|------------|
 | **CI** — Continuous Integration | Merger fréquemment, build + tests automatiques | Build, lint, tests |
-| **CD** — Continuous Delivery | Chaque commit est *pret* à être déployé | + staging, approval gates |
+| **CD** — Continuous Delivery | Chaque commit est *prêt* à être déployé | + staging, approval gates |
 | **CD** — Continuous Deployment | Chaque commit est *automatiquement* déployé | + production, no gates |
 
 ---
@@ -22,7 +22,7 @@ Commit → Lint → Build → Test → Scan → Stage → Approve → Deploy
   │        │       │       │       │       │        │         │
   │        │       │       │       │       │        │         └─ Production
   │        │       │       │       │       │        └─ Gate manuel (optionnel)
-  │        │       │       │       │       └─ Environnement de pre-prod
+  │        │       │       │       │       └─ Environnement de pré-prod
   │        │       │       │       └─ SAST, dependency scan, container scan
   │        │       │       └─ Unit, integration, e2e
   │        │       └─ Compilation, bundling, containerisation
@@ -39,11 +39,11 @@ Commit → Lint → Build → Test → Scan → Stage → Approve → Deploy
 Remplacement progressif des instances. Zero downtime.
 
 ```
-v1 v1 v1 v1    (etat initial)
-v2 v1 v1 v1    (1/4 mis a jour)
-v2 v2 v1 v1    (2/4 mis a jour)
-v2 v2 v2 v1    (3/4 mis a jour)
-v2 v2 v2 v2    (déploiement termine)
+v1 v1 v1 v1    (état initial)
+v2 v1 v1 v1    (1/4 mis à jour)
+v2 v2 v1 v1    (2/4 mis à jour)
+v2 v2 v2 v1    (3/4 mis à jour)
+v2 v2 v2 v2    (déploiement terminé)
 ```
 
 **Avantages** : simple, zero downtime
@@ -51,18 +51,18 @@ v2 v2 v2 v2    (déploiement termine)
 
 ### Blue-Green
 
-Deux environnements identiques. Le switch est instantane.
+Deux environnements identiques. Le switch est instantané.
 
 ```
 Avant :  LB → [Blue v1] ←── trafic
               [Green idle]
 
-Apres :  LB → [Blue v1]
+Après :  LB → [Blue v1]
               [Green v2] ←── trafic (switch DNS/LB)
 ```
 
-**Avantages** : rollback instantane, pas de coexistence
-**Risques** : double le cout d'infra
+**Avantages** : rollback instantané, pas de coexistence
+**Risques** : double le coût d'infra
 
 ### Canary
 
@@ -73,11 +73,11 @@ v1 ←── 95% du trafic
 v2 ←──  5% du trafic (canary)
 
 Si OK → augmenter progressivement
-Si KO → rollback immediat
+Si KO → rollback immédiat
 ```
 
-**Avantages** : risque minimal, validation en productionréelle
-**Risques** : plus complexe a implementer
+**Avantages** : risque minimal, validation en production réelle
+**Risques** : plus complexe à implémenter
 
 ---
 
@@ -86,7 +86,7 @@ Si KO → rollback immediat
 ### Pipeline
 
 - **Fail fast** : les étapes rapides en premier (lint avant les tests e2e)
-- **Paralleliser** : tests unitaires en parallele des tests d'integration
+- **Paralléliser** : tests unitaires en parallèle des tests d'integration
 - **Cache** : dependencies, images Docker, artefacts
 - **Idempotent** : relancer le pipeline doit produire le même résultat
 - **Immutable artifacts** : un artefact build une fois, déployé partout
@@ -95,17 +95,17 @@ Si KO → rollback immediat
 
 - **Shift left** : intégrer la sécurité tôt dans le pipeline
 - **SAST** : analyse statique du code (Semgrep, SonarQube)
-- **SCA** : scan des dependances (Dependabot, Snyk)
-- **Container scanning** : vulnerabilites dans les images Docker (Trivy)
-- **Secret detection** : empecher les commits de secrets (git-secrets, truffleHog)
+- **SCA** : scan des dépendances (Dependabot, Snyk)
+- **Container scanning** : vulnérabilités dans les images Docker (Trivy)
+- **Secret detection** : empêcher les commits de secrets (git-secrets, truffleHog)
 
 ### Environnements
 
 ```
 Dev → Staging → Production
 
-Dev       : chaque dev, donnees synthetiques
-Staging   : replique de prod, donnees anonymisees
+Dev       : chaque dev, données synthétiques
+Staging   : réplique de prod, données anonymisées
 Production: le vrai deal
 ```
 
@@ -117,10 +117,10 @@ Découpler le déploiement de la release :
 
 ```
 Déploiement : le code est en production
-Release     : la fonctionnalite est activee pour les utilisateurs
+Release     : la fonctionnalité est activée pour les utilisateurs
 ```
 
 - Activer progressivement (1% → 10% → 50% → 100%)
 - Tester en production sans risque
-- Kill switch instantané en cas de probleme
+- Kill switch instantané en cas de problème
 - A/B testing natif

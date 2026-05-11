@@ -12,7 +12,7 @@ AWS Secret Access Key: ********
 Default region name: eu-west-3
 Default output format: json" />
 
-<TerminalBlock command="aws sts get-caller-identity" output="Verifier l'identite IAM active" />
+<TerminalBlock command="aws sts get-caller-identity" output="Vérifier l'identité IAM active" />
 
 ---
 
@@ -24,7 +24,7 @@ Default output format: json" />
 
 <TerminalBlock command="aws iam attach-user-policy --user-name deploy-bot --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess" />
 
-### Principe du moindre privilege
+### Principe du moindre privilège
 
 ```json
 {
@@ -59,7 +59,7 @@ Default output format: json" />
 | Type | vCPU | RAM | Usage |
 |------|------|-----|-------|
 | t3.micro | 2 | 1 GB | Dev, tests |
-| t3.medium | 2 | 4 GB | Apps legeres |
+| t3.medium | 2 | 4 GB | Apps légères |
 | m6i.large | 2 | 8 GB | General purpose |
 | c6i.large | 2 | 4 GB | CPU-intensive |
 | r6i.large | 2 | 16 GB | Memory-intensive |
@@ -70,13 +70,13 @@ Default output format: json" />
 
 <TerminalBlock command="aws s3 ls" output="Lister tous les buckets" />
 
-<TerminalBlock command="aws s3 mb s3://mon-bucket-unique" output="Creer un bucket" />
+<TerminalBlock command="aws s3 mb s3://mon-bucket-unique" output="Créer un bucket" />
 
 <TerminalBlock command="aws s3 cp fichier.txt s3://mon-bucket/" />
 
 <TerminalBlock command="aws s3 sync ./dist s3://mon-bucket/ --delete" output="Synchroniser un dossier local avec S3" />
 
-<TerminalBlock command="aws s3 presign s3://mon-bucket/fichier.pdf --expires-in 3600" output="Generer un lien temporaire (1h)" />
+<TerminalBlock command="aws s3 presign s3://mon-bucket/fichier.pdf --expires-in 3600" output="Générer un lien temporaire (1h)" />
 
 ---
 
@@ -99,9 +99,9 @@ VPC (10.0.0.0/16)
 | | Security Group | NACL |
 |---|---------------|------|
 | Niveau | Instance | Subnet |
-| Etat | Stateful | Stateless |
-| Regles | Allow only | Allow + Deny |
-| Evaluation | Toutes les regles | Ordre numerique |
+| État | Stateful | Stateless |
+| Règles | Allow only | Allow + Deny |
+| Évaluation | Toutes les règles | Ordre numérique |
 
 ---
 
@@ -115,9 +115,9 @@ VPC (10.0.0.0/16)
 
 - Multi-AZ pour la haute disponibilité
 - Read replicas pour les lectures intensives
-- Sauvegardes automatiques activees
+- Sauvegardes automatiques activées
 - Chiffrement au repos et en transit
-- Pas d'acces public (subnet prive)
+- Pas d'accès public (subnet privé)
 
 ---
 
@@ -135,13 +135,13 @@ VPC (10.0.0.0/16)
 |---------|-------------|
 | **EC2** | Serveurs virtuels |
 | **S3** | Stockage objets |
-| **RDS** | Bases de donnees relationnelles |
-| **EKS** | Kubernetes manage |
-| **ECS** | Conteneurs manages (Fargate) |
+| **RDS** | Bases de données relationnelles |
+| **EKS** | Kubernetes managé |
+| **ECS** | Conteneurs managés (Fargate) |
 | **Lambda** | Serverless functions |
 | **CloudFront** | CDN |
 | **Route 53** | DNS |
-| **IAM** | Gestion des identites |
-| **VPC** | Réseau virtuel prive |
+| **IAM** | Gestion des identités |
+| **VPC** | Réseau virtuel privé |
 | **CloudWatch** | Monitoring et logs |
 | **SNS/SQS** | Messaging et queues |

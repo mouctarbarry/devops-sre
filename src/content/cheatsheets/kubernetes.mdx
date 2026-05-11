@@ -34,7 +34,7 @@ worker-02     Ready    <none>          30d   v1.31.0   10.0.0.12" />
 
 <TerminalBlock command="kubectl exec -it mon-pod -- /bin/sh" />
 
-<TerminalBlock command="kubectl port-forward pod/mon-pod 8080:80" output="Acceder au pod localement sur localhost:8080" />
+<TerminalBlock command="kubectl port-forward pod/mon-pod 8080:80" output="Accéder au pod localement sur localhost:8080" />
 
 <TerminalBlock command="kubectl delete pod mon-pod" />
 
@@ -93,11 +93,11 @@ spec:
 
 <TerminalBlock command="kubectl rollout history deployment/api" />
 
-<TerminalBlock command="kubectl rollout undo deployment/api" output="Rollback a la version précédente" />
+<TerminalBlock command="kubectl rollout undo deployment/api" output="Rollback à la version précédente" />
 
 <TerminalBlock command="kubectl scale deployment/api --replicas=5" />
 
-<TerminalBlock command="kubectl set image deployment/api api=mon-api:2.0" output="Mise a jour de l'image (rolling update)" />
+<TerminalBlock command="kubectl set image deployment/api api=mon-api:2.0" output="Mise à jour de l'image (rolling update)" />
 
 ---
 
@@ -119,9 +119,9 @@ spec:
 
 | Type | Usage |
 |------|-------|
-| **ClusterIP** | Interne au cluster (defaut) |
+| **ClusterIP** | Interne au cluster (défaut) |
 | **NodePort** | Expose sur un port de chaque node (30000-32767) |
-| **LoadBalancer** | Cree un LB cloud externe |
+| **LoadBalancer** | Crée un LB cloud externe |
 | **ExternalName** | Alias DNS vers un service externe |
 
 <TerminalBlock command="kubectl get svc" />
@@ -156,7 +156,7 @@ spec:
 
 <TerminalBlock command="kubectl get all -n staging" />
 
-<TerminalBlock command="kubectl config set-context --current --namespace=staging" output="Changer le namespace par defaut" />
+<TerminalBlock command="kubectl config set-context --current --namespace=staging" output="Changer le namespace par défaut" />
 
 ---
 

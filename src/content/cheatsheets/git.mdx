@@ -1,7 +1,7 @@
 ---
 title: Git
 category: scripting
-description: Cheatsheet Git — workflow quotidien, branches, rebase, stash et resolution de conflits
+description: Cheatsheet Git — workflow quotidien, branches, rebase, stash et résolution de conflits
 tags: [git, versionning, branches, rebase, merge]
 ---
 
@@ -19,7 +19,7 @@ tags: [git, versionning, branches, rebase, merge]
 
 ## Workflow quotidien
 
-<TerminalBlock command="git status" output="Voir les fichiers modifies, stages et non-trackes" />
+<TerminalBlock command="git status" output="Voir les fichiers modifiés, stagés et non-trackés" />
 
 <TerminalBlock command="git add fichier.ts" output="Stager un fichier spécifique" />
 
@@ -29,7 +29,7 @@ tags: [git, versionning, branches, rebase, merge]
 
 <TerminalBlock command="git push origin main" />
 
-<TerminalBlock command="git pull --rebase origin main" output="Pull en rebasant (evite les merge commits)" />
+<TerminalBlock command="git pull --rebase origin main" output="Pull en rebasant (évite les merge commits)" />
 
 ---
 
@@ -39,13 +39,13 @@ tags: [git, versionning, branches, rebase, merge]
 
 <TerminalBlock command="git branch -a" output="Lister toutes les branches (locales + remote)" />
 
-<TerminalBlock command="git checkout -b feat/new-feature" output="Creer et switcher sur une nouvelle branche" />
+<TerminalBlock command="git checkout -b feat/new-feature" output="Créer et switcher sur une nouvelle branche" />
 
 <TerminalBlock command="git switch feat/new-feature" output="Syntaxe moderne pour changer de branche" />
 
-<TerminalBlock command="git switch -c feat/new-feature" output="Creer et switcher (syntaxe moderne)" />
+<TerminalBlock command="git switch -c feat/new-feature" output="Créer et switcher (syntaxe moderne)" />
 
-<TerminalBlock command="git branch -d feat/old-feature" output="Supprimer une branche mergee" />
+<TerminalBlock command="git branch -d feat/old-feature" output="Supprimer une branche mergée" />
 
 <TerminalBlock command="git push origin --delete feat/old-feature" output="Supprimer une branche remote" />
 
@@ -75,7 +75,7 @@ Apres:  main:     A --- B --- C
 
 <TerminalBlock command="git checkout feat/new-feature && git rebase main" />
 
-**Regle d'or** : ne jamais rebase une branche publique/partagee.
+**Regle d'or** : ne jamais rebase une branche publique/partagée.
 
 ---
 
@@ -104,13 +104,13 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 <TerminalBlock command="git log --author='Mouctar' --since='1 week ago'" />
 
-<TerminalBlock command="git diff" output="Voir les modifications non stagees" />
+<TerminalBlock command="git diff" output="Voir les modifications non stagées" />
 
-<TerminalBlock command="git diff --staged" output="Voir les modifications stagees" />
+<TerminalBlock command="git diff --staged" output="Voir les modifications stagées" />
 
 <TerminalBlock command="git diff main..feat/new-feature" output="Comparer deux branches" />
 
-<TerminalBlock command="git blame fichier.ts" output="Voir qui a modifie chaque ligne" />
+<TerminalBlock command="git blame fichier.ts" output="Voir qui a modifié chaque ligne" />
 
 <TerminalBlock command="git show abc1234" output="Details d'un commit spécifique" />
 
@@ -118,23 +118,23 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 ## Annuler des changements
 
-<TerminalBlock command="git restore fichier.ts" output="Annuler les modifications non stagees d'un fichier" />
+<TerminalBlock command="git restore fichier.ts" output="Annuler les modifications non stagées d'un fichier" />
 
 <TerminalBlock command="git restore --staged fichier.ts" output="Unstage un fichier (garder les modifications)" />
 
-<TerminalBlock command="git revert abc1234" output="Creer un nouveau commit qui annule un commit" />
+<TerminalBlock command="git revert abc1234" output="Créer un nouveau commit qui annule un commit" />
 
-<TerminalBlock command="git reset --soft HEAD~1" output="Annuler le dernier commit, garder les changements stages" />
+<TerminalBlock command="git reset --soft HEAD~1" output="Annuler le dernier commit, garder les changements stagés" />
 
-<TerminalBlock command="git reset --mixed HEAD~1" output="Annuler le dernier commit, garder les changements non stages" />
+<TerminalBlock command="git reset --mixed HEAD~1" output="Annuler le dernier commit, garder les changements non stagés" />
 
 ---
 
 ## Tags
 
-<TerminalBlock command="git tag v1.0.0" output="Tag leger" />
+<TerminalBlock command="git tag v1.0.0" output="Tag léger" />
 
-<TerminalBlock command="git tag -a v1.0.0 -m 'Release 1.0.0'" output="Tag annote (recommande)" />
+<TerminalBlock command="git tag -a v1.0.0 -m 'Release 1.0.0'" output="Tag annoté (recommandé)" />
 
 <TerminalBlock command="git push origin v1.0.0" />
 
@@ -154,6 +154,6 @@ stash@{1}: WIP on main: abc1234 fix typo" />
 
 - **Conventional Commits** : `type(scope): description`
 - **Branches courtes** : merger rapidement, éviter les branches longues
-- **Pull --rebase** : garder un historique lineaire
+- **Pull --rebase** : garder un historique linéaire
 - **Ne jamais force push sur main**
 - **.gitignore** : ignorer `node_modules/`, `.env`, `dist/`, `.next/`

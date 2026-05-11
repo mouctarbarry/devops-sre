@@ -86,7 +86,7 @@ export default async function CheatsheetPage({ params }: PageProps) {
                     rehypePrettyCode,
                     {
                       theme: { dark: "one-dark-pro", light: "github-light" },
-                      keepBackground: true,
+                      keepBackground: false,
                     },
                   ],
                 ],

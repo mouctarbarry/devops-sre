@@ -26,27 +26,27 @@ mon-app       1.0    a1b2c3d4e5f6   2 minutes ago  150MB" />
 
 ## Conteneurs
 
-<TerminalBlock command="docker run -d --name web -p 8080:80 nginx:alpine" output="Lance nginx en arriere-plan, port 8080 → 80" />
+<TerminalBlock command="docker run -d --name web -p 8080:80 nginx:alpine" output="Lance nginx en arrière-plan, port 8080 → 80" />
 
 <TerminalBlock command="docker ps" output="CONTAINER ID   IMAGE          COMMAND   STATUS    PORTS                  NAMES
 f1a2b3c4d5e6   nginx:alpine   ...       Up 5s     0.0.0.0:8080->80/tcp   web" />
 
-<TerminalBlock command="docker ps -a" output="Affiche tous les conteneurs (y compris arretes)" />
+<TerminalBlock command="docker ps -a" output="Affiche tous les conteneurs (y compris arrêtés)" />
 
 <TerminalBlock command="docker exec -it web sh" output="Ouvre un shell interactif dans le conteneur" />
 
-<TerminalBlock command="docker logs -f web" output="Suivre les logs en tempsréel" />
+<TerminalBlock command="docker logs -f web" output="Suivre les logs en temps réel" />
 
 <TerminalBlock command="docker stop web && docker rm web" />
 
-<TerminalBlock command="docker stats" output="Monitorer CPU, mémoire, I/O en tempsréel" />
+<TerminalBlock command="docker stats" output="Monitorer CPU, mémoire, I/O en temps réel" />
 
 ---
 
 ## Dockerfile — bonnes pratiques
 
 ```dockerfile
-# Multi-stage build pour images legeres
+# Multi-stage build pour images légères
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
@@ -63,9 +63,9 @@ EXPOSE 3000
 CMD ["npx", "serve", "out"]
 ```
 
-**Regles d'or :**
+**Règles d'or :**
 - Utiliser des images `alpine` ou `distroless`
-- Multi-stage builds pour reduire la taille
+- Multi-stage builds pour réduire la taille
 - Copier `package.json` avant le code (cache layers)
 - Ne jamais tourner en `root`
 - Un process par conteneur
@@ -130,7 +130,7 @@ volumes:
   pgdata:
 ```
 
-<TerminalBlock command="docker compose up -d" output="Lance tous les services en arriere-plan" />
+<TerminalBlock command="docker compose up -d" output="Lance tous les services en arrière-plan" />
 
 <TerminalBlock command="docker compose logs -f app" />
 
@@ -140,6 +140,6 @@ volumes:
 
 ## Nettoyage
 
-<TerminalBlock command="docker system prune -a --volumes" output="Supprime TOUT : conteneurs arretes, images, volumes orphelins" />
+<TerminalBlock command="docker system prune -a --volumes" output="Supprime TOUT : conteneurs arrêtés, images, volumes orphelins" />
 
 <TerminalBlock command="docker system df" output="Voir l'espace disque utilisé par Docker" />

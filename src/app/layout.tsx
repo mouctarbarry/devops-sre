@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Quicksand, Ubuntu_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Header, Sidebar } from '@/components/header';
 import './globals.css';
 
 const inter = Inter({
@@ -25,7 +26,7 @@ const ubuntuMono = Ubuntu_Mono({
 export const metadata: Metadata = {
   title: 'DevOps & SRE — Concepts, philosophie et cheatsheets',
   description:
-    'Reference interactive DevOps & SRE : philosophie, principes et cheatsheets pratiques pour Kubernetes, Docker, Terraform, Ansible, AWS et plus.',
+    'Référence interactive DevOps & SRE : philosophie, principes et cheatsheets pratiques pour Kubernetes, Docker, Terraform, Ansible, AWS et plus.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -37,7 +38,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {children}
+          <Header />
+          <div className="flex">
+            <Sidebar />
+            <div className="min-h-[calc(100vh-3.5rem)] flex-1 overflow-x-hidden">
+              {children}
+            </div>
+          </div>
         </ThemeProvider>
       </body>
     </html>

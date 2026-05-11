@@ -7,23 +7,23 @@ tags: [devops, culture, collaboration, automatisation]
 
 ## Les 3 voies du DevOps
 
-Le DevOps repose sur trois principes fondamentaux decrits par Gene Kim dans *The Phoenix Project* :
+Le DevOps repose sur trois principes fondamentaux décrits par Gene Kim dans *The Phoenix Project* :
 
-### 1. Flow (accelerer le flux)
+### 1. Flow (accélérer le flux)
 
-Optimiser le flux de travail de gauche a droite — du developpement a la production.
+Optimiser le flux de travail de gauche a droite — du développement à la production.
 
 - **Réduire la taille des lots** : petits changements, déployés fréquemment
-- **Limiter le travail en cours** (WIP) : éviter le multitache excessif
-- **Eliminer les goulots d'etranglement** : automatiser les processus manuels
+- **Limiter le travail en cours** (WIP) : éviter le multitâche excessif
+- **Éliminer les goulots d'étranglement** : automatiser les processus manuels
 - **Rendre le travail visible** : tableaux Kanban, métriques de flux
 
 ### 2. Feedback (amplifier les boucles de retour)
 
-Creer des boucles de feedback rapides de droite a gauche.
+Créer des boucles de feedback rapides de droite à gauche.
 
 - **Monitoring en production** : détecter les problèmes avant les utilisateurs
-- **Tests automatises** : feedback immediat sur la qualite du code
+- **Tests automatisés** : feedback immédiat sur la qualité du code
 - **Alerting intelligent** : notifier les bonnes personnes au bon moment
 - **Post-mortems blameless** : apprendre des incidents sans pointer du doigt
 
@@ -31,10 +31,10 @@ Creer des boucles de feedback rapides de droite a gauche.
 
 Cultiver une culture d'expérimentation et d'amélioration.
 
-- **Experimentation** : tester des hypotheses avec des feature flags
-- **Prise de risque calculee** : échouer vite, apprendre vite
+- **Expérimentation** : tester des hypothèses avec des feature flags
+- **Prise de risque calculée** : échouer vite, apprendre vite
 - **Partage de connaissances** : documentation, pair programming, tech talks
-- **Amelioration continue** : retrospectives regulieres, kaizen
+- **Amélioration continue** : rétrospectives régulières, kaizen
 
 ---
 
@@ -42,9 +42,9 @@ Cultiver une culture d'expérimentation et d'amélioration.
 
 | Pilier | Description |
 |--------|-------------|
-| **C**ulture | Collaboration entre Dev et Ops, responsabilite partagee |
-| **A**utomatisation | CI/CD, IaC, tests automatises, monitoring |
-| **L**ean | Eliminer le gaspillage, flux continu, small batches |
+| **C**ulture | Collaboration entre Dev et Ops, responsabilité partagée |
+| **A**utomatisation | CI/CD, IaC, tests automatisés, monitoring |
+| **L**ean | Éliminer le gaspillage, flux continu, small batches |
 | **M**esure | Métriques DORA, SLI/SLO, lead time, MTTR |
 | **S**haring | Partage de connaissances, transparence, blameless culture |
 
@@ -54,30 +54,30 @@ Cultiver une culture d'expérimentation et d'amélioration.
 
 Les 4 métriques clés pour mesurer la performance DevOps :
 
-| Metrique | Elite | High | Medium | Low |
+| Métrique | Elite | High | Medium | Low |
 |----------|-------|------|--------|-----|
-| **Deployment Frequency** | A la demande | 1/jour - 1/semaine | 1/semaine - 1/mois | 1/mois - 6/mois |
+| **Deployment Frequency** | À la demande | 1/jour - 1/semaine | 1/semaine - 1/mois | 1/mois - 6/mois |
 | **Lead Time for Changes** | < 1 heure | 1 jour - 1 semaine | 1 semaine - 1 mois | 1 - 6 mois |
 | **Change Failure Rate** | 0-15% | 16-30% | 16-30% | 46-60% |
 | **MTTR** | < 1 heure | < 1 jour | < 1 jour | 1 semaine - 1 mois |
 
 ---
 
-## Anti-patterns a eviter
+## Anti-patterns à éviter
 
-- **Silos** : equipes Dev et Ops isolees, blame culture
-- **Snowflake servers** : serveurs configures manuellement, non reproductibles
+- **Silos** : équipes Dev et Ops isolées, blame culture
+- **Snowflake servers** : serveurs configurés manuellement, non reproductibles
 - **Change Advisory Board** comme goulot : approbations manuelles pour chaque déploiement
-- **Heroics** : dependance a des individus pour resoudre les incidents
-- **Déploiements Big Bang** : tout déployer en une fois au lieu de livraisons incrementales
+- **Heroics** : dépendance à des individus pour résoudre les incidents
+- **Déploiements Big Bang** : tout déployer en une fois au lieu de livraisons incrémentales
 
 ---
 
 ## You build it, you run it
 
-Le principe fondamental d'Amazon : l'equipe qui construit un service est aussi responsable de son fonctionnement en production. Cela encourage :
+Le principe fondamental d'Amazon : l'équipe qui construit un service est aussi responsable de son fonctionnement en production. Cela encourage :
 
-- La qualite du code (vous serez reveille si ca casse)
-- L'empathie pour les operations
+- La qualité du code (vous serez réveillé si ça casse)
+- L'empathie pour les opérations
 - Des boucles de feedback directes
 - L'ownership bout en bout

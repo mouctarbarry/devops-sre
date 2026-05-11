@@ -1,13 +1,13 @@
 ---
 title: Principes SRE
 category: concepts
-description: Site Reliability Engineering — les principes de Google pour operer des systèmes fiables a grande échelle
+description: Site Reliability Engineering — les principes de Google pour opérer des systèmes fiables à grande échelle
 tags: [sre, fiabilité, sli, slo, error-budget, toil]
 ---
 
 ## SRE en bref
 
-Le Site Reliability Engineering (SRE) est l'approche de Google pour les operations. La devise :
+Le Site Reliability Engineering (SRE) est l'approche de Google pour les opérations. La devise :
 
 > *"SRE is what happens when you ask a software engineer to design an operations function."*
 > — Ben Treynor Sloss
@@ -18,13 +18,13 @@ Le Site Reliability Engineering (SRE) est l'approche de Google pour les operatio
 
 ### SLI (Service Level Indicator)
 
-Metrique quantitative de la qualite du service.
+Métrique quantitative de la qualité du service.
 
 | Type | Exemple | Mesure |
 |------|---------|--------|
-| Disponibilite | % de requetes reussies | `(requetes 2xx) / (total requetes)` |
-| Latence | Temps de reponse p99 | `p99 < 200ms` |
-| Throughput | Requetes par seconde | `> 1000 req/s` |
+| Disponibilité | % de requêtes réussies | `(requetes 2xx) / (total requetes)` |
+| Latence | Temps de réponse p99 | `p99 < 200ms` |
+| Throughput | Requêtes par seconde | `> 1000 req/s` |
 | Error rate | % d'erreurs | `< 0.1% erreurs 5xx` |
 
 ### SLO (Service Level Objective)
@@ -33,7 +33,7 @@ Cible interne pour un SLI. Exemple : *99.9% de disponibilité sur 30 jours gliss
 
 <TerminalBlock
   command="# Calcul du budget d'erreur pour 99.9% SLO sur 30 jours"
-  output="Budget = 30 jours × 24h × 60min × (1 - 0.999) = 43.2 minutes de downtime autorise"
+  output="Budget = 30 jours × 24h × 60min × (1 - 0.999) = 43.2 minutes de downtime autorisé"
 />
 
 ### SLA (Service Level Agreement)
@@ -41,8 +41,8 @@ Cible interne pour un SLI. Exemple : *99.9% de disponibilité sur 30 jours gliss
 Contrat avec les clients. Toujours moins ambitieux que le SLO (marge de sécurité).
 
 ```
-SLA ≤ SLO ≤ realite mesuree
-Exemple : SLA 99.5% < SLO 99.9% < mesureréelle 99.95%
+SLA ≤ SLO ≤ réalité mesurée
+Exemple : SLA 99.5% < SLO 99.9% < mesure réelle 99.95%
 ```
 
 ---
@@ -66,11 +66,11 @@ L'error budget est la différence entre 100% et votre SLO. C'est la quantité de
 
 ---
 
-## Toil — le travail a eliminer
+## Toil — le travail à éliminer
 
-Le toil est le travail operationnel manuel, repetitif, automatisable et sans valeur durable.
+Le toil est le travail opérationnel manuel, répétitif, automatisable et sans valeur durable.
 
-### Caracteristiques du toil
+### Caractéristiques du toil
 
 - **Manuel** : un humain doit intervenir
 - **Répétitif** : même tâche encore et encore
@@ -78,29 +78,29 @@ Le toil est le travail operationnel manuel, repetitif, automatisable et sans val
 - **Réactif** : déclenché par un événement, pas proactif
 - **Sans valeur durable** : pas d'amélioration permanente du service
 
-### Regle des 50%
+### Règle des 50%
 
-Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est consacré a l'ingénierie : automatisation, amélioration des outils, projets de fiabilité.
+Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est consacré à l'ingénierie : automatisation, amélioration des outils, projets de fiabilité.
 
 ---
 
 ## Incident Management
 
-### Severites
+### Sévérités
 
 | Niveau | Impact | Response |
 |--------|--------|----------|
-| **SEV-1** | Service completement down | Page immediate, war room |
-| **SEV-2** | Degradation significative | Page, investigation prioritaire |
+| **SEV-1** | Service complètement down | Page immédiate, war room |
+| **SEV-2** | Dégradation significative | Page, investigation prioritaire |
 | **SEV-3** | Impact mineur | Notification, traitement heures ouvrables |
 | **SEV-4** | Cosmetic, non urgent | Ticket, backlog |
 
 ### Roles en incident
 
-- **Incident Commander (IC)** : coordonne la reponse
+- **Incident Commander (IC)** : coordonne la réponse
 - **Communication Lead** : informe les stakeholders
-- **Operations Lead** : execute les actions techniques
-- **Subject Matter Experts** : expertise spécifique au probleme
+- **Operations Lead** : exécute les actions techniques
+- **Subject Matter Experts** : expertise spécifique au problème
 
 ### Post-mortem blameless
 
@@ -118,17 +118,17 @@ Un SRE ne devrait pas passer plus de 50% de son temps sur le toil. Le reste est 
 
 - Rotations de 1-2 semaines maximum
 - Pas plus de 2 incidents par shift de 12h (objectif)
-- Playbooks documentes pour les alertes communes
-- Handoff structure entre shifts
-- Compensation adequate (temps libre, prime)
+- Playbooks documentés pour les alertes communes
+- Handoff structuré entre shifts
+- Compensation adéquate (temps libre, prime)
 
 ### Pyramide d'alerting
 
 ```
-        ▲ PAGE (reveille quelqu'un)
-       / \    → symptomes utilisateur, SLO en danger
+        ▲ PAGE (réveille quelqu'un)
+       / \    → symptômes utilisateur, SLO en danger
       /   \
-     / TICKET \  → degradation non urgente
+     / TICKET \  → dégradation non urgente
     /         \
    / DASHBOARD \ → métriques de surveillance
   /             \

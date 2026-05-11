@@ -45,10 +45,11 @@ export function CheatsheetExplorer({
             }`}
           >
             <h3
-              className={`font-mono text-sm font-bold ${
+              className={`flex items-center gap-2 font-mono text-sm font-bold ${
                 active === key ? "text-primary" : ""
               }`}
             >
+              <span className={`h-2 w-2 shrink-0 rounded-full ${cat.color}`} />
               {cat.label}
             </h3>
             <p className="mt-1 text-xs text-muted-foreground">

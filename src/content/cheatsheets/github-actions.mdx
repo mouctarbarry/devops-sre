@@ -48,9 +48,9 @@ on:
     types: [opened, synchronize]
 
   schedule:
-    - cron: '0 6 * * 1'  # Chaque lundi a 6h UTC
+    - cron: '0 6 * * 1'  # Chaque lundi à 6h UTC
 
-  workflow_dispatch:      # Declenchement manuel
+  workflow_dispatch:      # Déclenchement manuel
     inputs:
       environment:
         description: 'Target environment'
@@ -62,7 +62,7 @@ on:
 
 ---
 
-## Jobs et dependances
+## Jobs et dépendances
 
 ```yaml
 jobs:
@@ -239,8 +239,8 @@ jobs:
 if: github.event_name == 'push'
 if: contains(github.event.head_commit.message, '[skip ci]') == false
 if: github.ref == 'refs/heads/main'
-if: always()    # Exécuté même si un step précédent a échoue
-if: failure()   # Exécuté uniquement si un step précédent a échoue
+if: always()    # Exécuté même si un step précédent a échoué
+if: failure()   # Exécuté uniquement si un step précédent a échoué
 
 # Fonctions
 ${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -254,9 +254,9 @@ ${{ runner.os }}
 ## Bonnes pratiques
 
 - **Pinning des actions** : utiliser `@v4` ou un SHA complet, pas `@main`
-- **Minimal permissions** : `permissions: contents: read` par defaut
+- **Minimal permissions** : `permissions: contents: read` par défaut
 - **Secrets** : jamais en dur, toujours via `${{ secrets.* }}`
-- **Concurrency** : éviter les déploiements paralleles
+- **Concurrency** : éviter les déploiements parallèles
 - **Timeouts** : définir `timeout-minutes` pour éviter les jobs bloqués
 
 ```yaml

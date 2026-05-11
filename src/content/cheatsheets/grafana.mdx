@@ -7,7 +7,7 @@ tags: [grafana, dashboards, visualisation, monitoring, alerting]
 
 ## Architecture
 
-Grafana est la couche de visualisation. Il se connecte a des data sources pour afficher des dashboards.
+Grafana est la couche de visualisation. Il se connecte à des data sources pour afficher des dashboards.
 
 ```
 ┌────────────┐     ┌────────────┐     ┌────────────┐
@@ -29,9 +29,9 @@ Grafana est la couche de visualisation. Il se connecte a des data sources pour a
 | Data Source | Usage |
 |------------|-------|
 | **Prometheus** | Métriques time-series |
-| **Loki** | Logs agreres |
+| **Loki** | Logs agrégés |
 | **Elasticsearch** | Logs et search |
-| **PostgreSQL** | Donnees relationnelles |
+| **PostgreSQL** | Données relationnelles |
 | **CloudWatch** | Métriques AWS |
 | **InfluxDB** | Time-series IoT |
 
@@ -44,7 +44,7 @@ Grafana est la couche de visualisation. Il se connecte a des data sources pour a
 Le panel le plus utilisé. Affiche des métriques au fil du temps.
 
 ```promql
-# Requetes par seconde
+# Requêtes par seconde
 sum(rate(http_requests_total[5m])) by (handler)
 ```
 
@@ -59,7 +59,7 @@ avg(up{job="api"}) * 100
 
 ### Gauge
 
-Affiche une valeur avec des seuils colores.
+Affiche une valeur avec des seuils colorés.
 
 ```promql
 # Utilisation CPU
@@ -68,7 +68,7 @@ Affiche une valeur avec des seuils colores.
 
 ### Table
 
-Donnees tabulaires, utile pour les tops et inventaires.
+Données tabulaires, utile pour les tops et inventaires.
 
 ```promql
 # Top endpoints par latence P99
@@ -99,7 +99,7 @@ Affiche les logs depuis Loki ou Elasticsearch.
 
 ## Variables de dashboard
 
-Les variables rendent les dashboards dynamiques et reutilisables.
+Les variables rendent les dashboards dynamiques et réutilisables.
 
 ```
 # Variable "instance" depuis Prometheus
@@ -108,7 +108,7 @@ label_values(up{job="api"}, instance)
 # Variable "environment"
 label_values(up, environment)
 
-# Utilisation dans une requete
+# Utilisation dans une requête
 rate(http_requests_total{instance="$instance"}[5m])
 ```
 
@@ -131,7 +131,7 @@ Annotations:
 
 | Channel | Usage |
 |---------|-------|
-| **Slack** | Notifications equipe |
+| **Slack** | Notifications équipe |
 | **PagerDuty** | Astreinte, incidents critiques |
 | **Email** | Rapports, notifications non urgentes |
 | **Webhook** | Integration custom |
@@ -178,12 +178,12 @@ providers:
 
 ---
 
-## Dashboards recommandes
+## Dashboards recommandés
 
 ### SRE Golden Signals
 
-1. **Latence** : P50, P95, P99 des temps de reponse
-2. **Trafic** : Requetes par seconde
+1. **Latence** : P50, P95, P99 des temps de réponse
+2. **Trafic** : Requêtes par seconde
 3. **Erreurs** : Taux d'erreur 4xx et 5xx
 4. **Saturation** : CPU, mémoire, connections DB
 
@@ -198,8 +198,8 @@ providers:
 ## Bonnes pratiques
 
 - **Un dashboard par service** : pas de mega-dashboard
-- **Variables** : rendre les dashboards parametrables
+- **Variables** : rendre les dashboards paramétrables
 - **Annotations** : marquer les déploiements et incidents
-- **Seuils** : vert/jaune/rouge pour chaque metrique
+- **Seuils** : vert/jaune/rouge pour chaque métrique
 - **Dashboard as Code** : versionner les dashboards en Git
-- **Folders** : organiser par equipe ou domaine
+- **Folders** : organiser par équipe ou domaine

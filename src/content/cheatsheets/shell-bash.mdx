@@ -14,7 +14,7 @@ set -euo pipefail
 
 | Flag | Effet |
 |------|-------|
-| `set -e` | Arreter si une commande échoue |
+| `set -e` | Arrêter si une commande échoue |
 | `set -u` | Erreur si une variable est non définie |
 | `set -o pipefail` | Un pipe échoue si n'importe quelle commande échoue |
 
@@ -113,7 +113,7 @@ deploy "production" "v2.1.0"
 
 ## Pipes et redirections
 
-<TerminalBlock command="cat access.log | grep 'ERROR' | sort | uniq -c | sort -rn | head -10" output="Top 10 des erreurs les plus frequentes" />
+<TerminalBlock command="cat access.log | grep 'ERROR' | sort | uniq -c | sort -rn | head -10" output="Top 10 des erreurs les plus fréquentes" />
 
 ```bash
 # Redirections
@@ -144,23 +144,23 @@ command 2>&1              # Stderr vers stdout
 
 <TerminalBlock command="ps aux | grep nginx" />
 
-<TerminalBlock command="kill -15 1234" output="SIGTERM — arret propre" />
+<TerminalBlock command="kill -15 1234" output="SIGTERM — arrêt propre" />
 
-<TerminalBlock command="kill -9 1234" output="SIGKILL — arret force (dernier recours)" />
+<TerminalBlock command="kill -9 1234" output="SIGKILL — arrêt forcé (dernier recours)" />
 
-<TerminalBlock command="nohup ./script.sh &" output="Exécuter en arriere-plan, survit a la deconnexion" />
+<TerminalBlock command="nohup ./script.sh &" output="Exécuter en arrière-plan, survit à la déconnexion" />
 
-<TerminalBlock command="jobs -l" output="Lister les jobs en arriere-plan" />
+<TerminalBlock command="jobs -l" output="Lister les jobs en arrière-plan" />
 
 ---
 
 ## Commandes utiles
 
-<TerminalBlock command="xargs -I{} -P4 curl -s {} < urls.txt" output="Requetes paralleles (4 a la fois)" />
+<TerminalBlock command="xargs -I{} -P4 curl -s {} < urls.txt" output="Requêtes parallèles (4 à la fois)" />
 
 <TerminalBlock command="watch -n 5 'kubectl get pods'" output="Exécuter une commande toutes les 5 secondes" />
 
-<TerminalBlock command="timeout 30 ./long-script.sh" output="Limiter l'execution a 30 secondes" />
+<TerminalBlock command="timeout 30 ./long-script.sh" output="Limiter l'exécution à 30 secondes" />
 
 <TerminalBlock command="date -u +%Y-%m-%dT%H:%M:%SZ" output="Date au format ISO 8601 UTC" />
 

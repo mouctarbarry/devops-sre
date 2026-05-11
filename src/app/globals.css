@@ -179,6 +179,26 @@
   @apply px-4;
 }
 
+html:not(.dark) [data-rehype-pretty-code-figure] pre {
+  @apply bg-card;
+}
+
+html:not(.dark) [data-rehype-pretty-code-figure] code > [data-line] span {
+  color: var(--shiki-light) !important;
+}
+
+html.dark [data-rehype-pretty-code-figure] pre {
+  @apply bg-card;
+}
+
+html.dark [data-rehype-pretty-code-figure] code > [data-line] span {
+  color: var(--shiki-dark) !important;
+}
+
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  @apply bg-primary/10;
+}
+
 .prose code:not(pre code) {
   @apply rounded-md bg-secondary px-1.5 py-0.5 text-sm font-medium;
 }

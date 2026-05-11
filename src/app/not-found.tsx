@@ -9,7 +9,7 @@ export default function NotFound() {
         href="/"
         className="rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
       >
-        Retour a l&apos;accueil
+        Retour à l&apos;accueil
       </Link>
     </main>
   );

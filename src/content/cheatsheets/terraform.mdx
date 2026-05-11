@@ -11,15 +11,15 @@ tags: [terraform, iac, hcl, infrastructure, provisioning]
 terraform init → terraform plan → terraform apply → terraform destroy
 ```
 
-<TerminalBlock command="terraform init" output="Initialise le backend, telecharge les providers et modules" />
+<TerminalBlock command="terraform init" output="Initialise le backend, télécharge les providers et modules" />
 
-<TerminalBlock command="terraform plan" output="Affiche les changements prevus sans les appliquer" />
+<TerminalBlock command="terraform plan" output="Affiche les changements prévus sans les appliquer" />
 
 <TerminalBlock command="terraform apply" output="Applique les changements (demande confirmation)" />
 
 <TerminalBlock command="terraform apply -auto-approve" output="Applique sans demander confirmation (CI/CD)" />
 
-<TerminalBlock command="terraform destroy" output="Supprime toutes les ressources gerees" />
+<TerminalBlock command="terraform destroy" output="Supprime toutes les ressources gérées" />
 
 ---
 
@@ -28,7 +28,7 @@ terraform init → terraform plan → terraform apply → terraform destroy
 ```
 infra/
 ├── main.tf           # Ressources principales
-├── variables.tf      # Declaration des variables
+├── variables.tf      # Déclaration des variables
 ├── outputs.tf        # Valeurs de sortie
 ├── providers.tf      # Configuration des providers
 ├── terraform.tfvars  # Valeurs des variables (non commit)
@@ -126,7 +126,7 @@ output "db_endpoint" {
 
 <TerminalBlock command="terraform import aws_instance.web i-1234567890abcdef0" output="Importer une ressource existante" />
 
-### Backend S3 (recommande)
+### Backend S3 (recommandé)
 
 ```hcl
 terraform {
@@ -199,8 +199,8 @@ data "aws_ami" "ubuntu" {
 ## Bonnes pratiques
 
 - **Remote state** : S3 + DynamoDB pour le locking
-- **Modules** : reutiliser et versionner l'infrastructure
-- **Workspaces** : separer dev/staging/prod
+- **Modules** : réutiliser et versionner l'infrastructure
+- **Workspaces** : séparer dev/staging/prod
 - **Plan avant apply** : toujours reviewer le plan
 - **Versionner les providers** : pinning avec `~>` ou `=`
 - **tfvars secrets** : ne jamais commiter, utiliser des variables d'environnement ou un vault

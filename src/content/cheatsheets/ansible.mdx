@@ -5,17 +5,17 @@ description: Cheatsheet Ansible — inventaire, playbooks, roles, modules et bon
 tags: [ansible, automatisation, configuration, playbooks, roles]
 ---
 
-## Concepts cles
+## Concepts clés
 
 | Concept | Description |
 |---------|-------------|
 | **Inventaire** | Liste des machines cibles (hosts) |
-| **Playbook** | Fichier YAML decrivant les taches a executer |
-| **Role** | Collection reutilisable de taches, handlers, variables |
-| **Module** | Unite d'action (apt, copy, service, template...) |
-| **Task** | Appel d'un module avec des parametres |
-| **Handler** | Tache déclenchée par un `notify` (ex: redemarrer nginx) |
-| **Facts** | Informations collectees sur les machines cibles |
+| **Playbook** | Fichier YAML décrivant les tâches à exécuter |
+| **Role** | Collection réutilisable de tâches, handlers, variables |
+| **Module** | Unité d'action (apt, copy, service, template...) |
+| **Task** | Appel d'un module avec des paramètres |
+| **Handler** | Tâche déclenchée par un `notify` (ex: redémarrer nginx) |
+| **Facts** | Informations collectées sur les machines cibles |
 
 ---
 
@@ -43,7 +43,7 @@ ansible_ssh_private_key_file=~/.ssh/deploy_key
 
 ## Commandes ad-hoc
 
-<TerminalBlock command="ansible all -i inventory.ini -m ping" output="Tester la connectivite de tous les hosts" />
+<TerminalBlock command="ansible all -i inventory.ini -m ping" output="Tester la connectivité de tous les hosts" />
 
 <TerminalBlock command="ansible web -m shell -a 'uptime'" output="Exécuter une commande sur le groupe web" />
 
@@ -109,13 +109,13 @@ ansible_ssh_private_key_file=~/.ssh/deploy_key
 
 <TerminalBlock command="ansible-playbook -i inventory.ini deploy.yml" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --check" output="Dry run — affiche ce qui serait change sans l'appliquer" />
+<TerminalBlock command="ansible-playbook deploy.yml --check" output="Dry run — affiche ce qui serait changé sans l'appliquer" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --diff" output="Affiche les différences dans les fichiers modifies" />
+<TerminalBlock command="ansible-playbook deploy.yml --diff" output="Affiche les différences dans les fichiers modifiés" />
 
 <TerminalBlock command="ansible-playbook deploy.yml --limit web-01" output="Exécuter uniquement sur un host spécifique" />
 
-<TerminalBlock command="ansible-playbook deploy.yml --tags deploy" output="Exécuter uniquement les taches avec le tag 'deploy'" />
+<TerminalBlock command="ansible-playbook deploy.yml --tags deploy" output="Exécuter uniquement les tâches avec le tag 'deploy'" />
 
 ---
 
@@ -145,7 +145,7 @@ roles/
     - { role: app, app_version: "2.1.0" }
 ```
 
-<TerminalBlock command="ansible-galaxy init mon-role" output="Creer la structure d'un role" />
+<TerminalBlock command="ansible-galaxy init mon-role" output="Créer la structure d'un rôle" />
 
 <TerminalBlock command="ansible-galaxy install geerlingguy.docker" output="Installer un role depuis Galaxy" />
 
@@ -181,13 +181,13 @@ server {
 |--------|-------|
 | `apt` / `yum` | Gestion des paquets |
 | `copy` | Copier des fichiers |
-| `template` | Deployer des templates Jinja2 |
+| `template` | Déployer des templates Jinja2 |
 | `file` | Gérer fichiers et répertoires |
 | `service` / `systemd` | Gérer les services |
 | `user` / `group` | Gérer utilisateurs et groupes |
 | `git` | Cloner des repos |
 | `docker_container` | Gérer des conteneurs Docker |
-| `uri` | Requetes HTTP |
+| `uri` | Requêtes HTTP |
 | `wait_for` | Attendre qu'un port soit ouvert |
 
 ---
@@ -197,7 +197,7 @@ server {
 - **Idempotence** : relancer le playbook ne doit rien casser
 - **Handlers** : utiliser `notify` pour les redémarrages de services
 - **Vault** : chiffrer les secrets avec `ansible-vault`
-- **Tags** : taguer les taches pour des executions selectivement
+- **Tags** : taguer les tâches pour des exécutions sélectives
 - **Check mode** : toujours tester avec `--check` avant d'appliquer
 
 <TerminalBlock command="ansible-vault encrypt vars/secrets.yml" output="Chiffrer un fichier de secrets" />
